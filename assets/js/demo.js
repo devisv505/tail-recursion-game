@@ -19,47 +19,118 @@
 
   /* --------------------------------------------------------------- program */
 
+  // Laid out the way the editor lays a graph out: left to right, branches
+  // fanning vertically. `step` is the index in the exec chain the editor draws
+  // in the node's bottom-right corner.
+  var NODE_W = 170, PORT_Y = 34, PORT_GAP = 22;
+
   var PROGRAM = [
-    { id: 'start', name: 'Start', cat: 'event', cost: 0, ports: ['out'] },
-    { id: 'wall_ahead', name: 'Wall Ahead?', cat: 'sensing', cost: 1, ports: ['yes', 'no'] },
-    { id: 'turn_right', name: 'Turn Right', cat: 'action', cost: 1, ports: ['out'] },
-    { id: 'move_forward', name: 'Move Forward', cat: 'action', cost: 1, ports: ['out'] },
+    { id: 'start', name: 'Start', cat: 'event', cost: 0, step: 1,
+      x: 20, y: 88, entry: true, ports: ['out'] },
+    { id: 'wall_ahead', name: 'Wall Ahead?', cat: 'sensing', cost: 1, step: 2,
+      x: 210, y: 88, ports: ['yes', 'no'] },
+    { id: 'turn_right', name: 'Turn Right', cat: 'action', cost: 1, step: 3,
+      x: 440, y: 20, ports: ['out'] },
+    { id: 'move_forward', name: 'Move Forward', cat: 'action', cost: 1, step: 3,
+      x: 440, y: 156, ports: ['out'] },
   ];
 
-  var nodes = PROGRAM.map(function (b, i) {
-    var el = document.createElement('div');
-    el.className = 'node node--' + b.cat;
-    el.innerHTML =
-      '<div class="node__head"><span>' + b.name + '</span>' +
-      '<span class="node__cost">' + b.cost + 'op</span></div>' +
-      '<div class="node__body">' + b.id + '</div>' +
-      '<div class="node__ports">' +
-        b.ports.map(function (p) {
-          return '<span class="node__port" data-port="' + p + '">' + p + '</span>';
-        }).join('') +
-      '</div>';
-    chain.appendChild(el);
+  // from-node index, its port, to-node index.
+  var WIRES = [
+    { from: 0, port: 'out', to: 1 },
+    { from: 1, port: 'yes', to: 2 },
+    { from: 1, port: 'no',  to: 3 },
+  ];
 
-    if (i === 1) {
-      var w = document.createElement('div');
-      w.className = 'wirelink';
-      w.textContent = 'yes → Turn Right   ·   no → Move Forward';
-      chain.appendChild(w);
+  function outPos(b, port) {
+    return { x: b.x + NODE_W, y: b.y + PORT_Y + b.ports.indexOf(port) * PORT_GAP };
+  }
+  function inPos(b) {
+    return { x: b.x, y: b.y + PORT_Y };
+  }
+
+  /* ------------------------------------------------------------------ wires */
+
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'graph__wires');
+  chain.appendChild(svg);
+
+  var wirePaths = WIRES.map(function (w) {
+    var a = outPos(PROGRAM[w.from], w.port);
+    var b = inPos(PROGRAM[w.to]);
+    var mid = a.x + (b.x - a.x) / 2;
+    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    // Right-angled, like the editor's wires: out, across, in.
+    path.setAttribute('d', 'M' + a.x + ',' + a.y + ' H' + mid + ' V' + b.y + ' H' + b.x);
+    svg.appendChild(path);
+    return path;
+  });
+
+  /* ------------------------------------------------------------------ nodes */
+
+  var nodes = PROGRAM.map(function (b) {
+    var el = document.createElement('div');
+    el.className = 'gnode gnode--' + b.cat + (b.entry ? ' gnode--entry' : '');
+    el.style.left = b.x + 'px';
+    el.style.top = b.y + 'px';
+
+    el.innerHTML =
+      '<div class="gnode__head">' +
+        '<span class="gnode__name">' + b.name + '</span>' +
+        '<span class="gnode__i">i</span>' +
+        '<span class="gnode__cost">' + b.cost + 'op</span>' +
+      '</div>' +
+      '<div class="gnode__body">' + b.id + '</div>' +
+      '<span class="gnode__num">' + b.step + '</span>';
+
+    // Start has no exec input: it is where flow begins.
+    if (!b.entry) {
+      var pin = document.createElement('span');
+      pin.className = 'gport gport--in';
+      pin.style.top = (PORT_Y - 4) + 'px';
+      el.appendChild(pin);
     }
+
+    b.ports.forEach(function (name, i) {
+      var top = PORT_Y + i * PORT_GAP;
+
+      var port = document.createElement('span');
+      port.className = 'gport gport--out';
+      port.dataset.port = name;
+      port.style.top = (top - 4) + 'px';
+      el.appendChild(port);
+
+      var label = document.createElement('span');
+      label.className = 'gport__label';
+      label.dataset.port = name;
+      label.style.top = top + 'px';
+      label.textContent = name;
+      el.appendChild(label);
+    });
+
+    chain.appendChild(el);
     return el;
   });
 
+  /* Highlights the running node the way the editor does — a green ring — plus
+   * the port and wire the branch actually took. */
   function light(index, port) {
     nodes.forEach(function (n) { n.removeAttribute('data-live'); });
-    chain.querySelectorAll('.node__port').forEach(function (p) {
+    chain.querySelectorAll('[data-port]').forEach(function (p) {
       p.removeAttribute('data-taken');
     });
+    wirePaths.forEach(function (p) { p.classList.remove('hot'); });
+
     if (index == null) return;
     nodes[index].setAttribute('data-live', '');
-    if (port) {
-      var p = nodes[index].querySelector('[data-port="' + port + '"]');
-      if (p) p.setAttribute('data-taken', '');
-    }
+    if (!port) return;
+
+    nodes[index].querySelectorAll('[data-port="' + port + '"]').forEach(function (p) {
+      p.setAttribute('data-taken', '');
+    });
+    WIRES.forEach(function (w, i) {
+      if (w.from === index && w.port === port) wirePaths[i].classList.add('hot');
+    });
   }
 
   /* ----------------------------------------------------------------- world */

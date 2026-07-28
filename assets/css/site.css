@@ -412,21 +412,33 @@ section + section { border-top: 1px solid var(--line); }
 
 /* ------------------------------------------------------------------- demo */
 
+/* Map above, block canvas below — the same split the game window uses. */
 .demo {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  /* minmax(0,1fr), not 1fr: a grid track defaults to min-width auto, which the
+   * 660px node canvas would prise open instead of scrolling inside itself. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
 }
-.demo__stage { background: #060a0d; padding: 20px; }
-.demo__side  { background: var(--panel); padding: 20px; }
+.demo__stage { background: #060a0d; padding: 20px; min-width: 0; }
+.demo__side  { background: var(--panel); padding: 0; min-width: 0; }
+
+.demo__side .eyebrow {
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+}
 
 .board {
   display: grid;
   gap: 2px;
   margin: 0 auto;
   width: 100%;
+  max-width: 720px;
   aspect-ratio: 14 / 7;
 }
 .cell { background: #0b1a15; border: 1px solid transparent; }
@@ -445,52 +457,143 @@ section + section { border-top: 1px solid var(--line); }
 .demo__ctrl { display: flex; gap: 6px; margin-left: auto; }
 .demo__ctrl .btn { padding: 6px 11px; font-size: 11px; }
 
-/* Node chain: the same header-coloured blocks the editor draws. */
-.chain { display: flex; flex-direction: column; gap: 12px; }
+/* The node canvas, drawn to match the in-game editor. Every colour here is
+ * lifted from src/editor.cpp rather than picked by eye. */
+:root {
+  --ed-canvas:   #101219;   /* kCanvas    */
+  --ed-grid:     #161922;   /* kGrid      */
+  --ed-grid-maj: #252c3c;   /* kGridMajor */
+  --ed-fill:     #1b212e;   /* kNodeFill  */
+  --ed-edge:     #425169;   /* kNodeEdge  */
+  --ed-entry:    #e8994a;   /* kEntry — the orange ring on the entry node */
+  --ed-running:  #8be5aa;   /* kRunning   */
+  --ed-wire:     #60bf80;   /* kExecWire  */
+  --ed-wire-hot: #a9f2bd;   /* kExecWireHot */
+  --ed-label:    #c7d4e6;   /* kLabel     */
+  --ed-dim:      #66748b;   /* kDim       */
+  --ed-badge:    #fbca4f;   /* kSelected, which is also the step badge */
 
-.node {
-  border: 1px solid var(--line-2);
-  background: var(--panel-2);
-  transition: border-color .12s, box-shadow .12s, transform .12s;
+  /* category_color() */
+  --cat-sensing:   #609ce1;
+  --cat-source:    #8bc47e;
+  --cat-condition: #d8b465;
+  --cat-memory:    #b38cd8;
+  --cat-action:    #e67979;
 }
-.node__head {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 5px 9px;
+
+.graph-scroll { overflow-x: auto; overflow-y: hidden; min-width: 0; }
+
+.graph {
+  position: relative;
+  width: 660px;
+  height: 250px;
+  background-color: var(--ed-canvas);
+  background-image:
+    linear-gradient(to right,  var(--ed-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ed-grid) 1px, transparent 1px),
+    linear-gradient(to right,  var(--ed-grid-maj) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ed-grid-maj) 1px, transparent 1px);
+  background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px;
+}
+
+.graph__wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.graph__wires path {
+  fill: none;
+  stroke: var(--ed-wire);
+  stroke-width: 1.5;
+  transition: stroke .12s;
+}
+.graph__wires path.hot { stroke: var(--ed-wire-hot); stroke-width: 2; }
+
+.gnode {
+  position: absolute;
+  width: 170px;
+  background: var(--ed-fill);
+  border: 1px solid var(--ed-edge);
+  transition: border-color .12s, box-shadow .12s;
+}
+.gnode--entry { border-color: var(--ed-entry); }
+.gnode[data-live] {
+  border-color: var(--ed-running);
+  box-shadow: 0 0 14px rgba(139, 229, 170, .22);
+}
+
+.gnode__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 6px;
+  background: var(--ed-edge);
+  color: #0d1119;
+  font-size: 11.5px;
+  letter-spacing: .04em;
+}
+.gnode__name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The editor's info button: a recessed chip, not a coloured one. */
+.gnode__i {
+  flex: none;
+  background: #33415c;
+  color: var(--ed-label);
+  font-size: 10px;
+  line-height: 1;
+  padding: 2px 5px;
+}
+.gnode__cost { flex: none; font-size: 10.5px; opacity: .85; }
+
+.gnode__body {
+  padding: 8px 7px 20px;
+  font-size: 11.5px;
+  color: var(--ed-dim);
+  letter-spacing: .03em;
+}
+
+/* Step index in the exec chain, bottom-right, exactly where the editor puts it. */
+.gnode__num {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  min-width: 13px;
+  height: 13px;
+  background: var(--ed-badge);
+  color: #14100a;
+  font-size: 10px;
+  line-height: 13px;
+  text-align: center;
+  padding: 0 2px;
+}
+
+.gnode--sensing   .gnode__head { background: var(--cat-sensing); }
+.gnode--source    .gnode__head { background: var(--cat-source); }
+.gnode--condition .gnode__head { background: var(--cat-condition); }
+.gnode--memory    .gnode__head { background: var(--cat-memory); }
+.gnode--action    .gnode__head { background: var(--cat-action); }
+/* flow and event fall through to kNodeEdge, as they do in the editor. */
+
+/* Ports sit centred on the node's edge, labels outside it. */
+.gport {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: var(--ed-wire);
+  transition: background .12s, box-shadow .12s;
+}
+.gport--in  { left: -5px; }
+.gport--out { right: -5px; }
+.gport[data-taken] {
+  background: var(--ed-wire-hot);
+  box-shadow: 0 0 8px rgba(169, 242, 189, .55);
+}
+
+.gport__label {
+  position: absolute;
+  left: calc(100% + 9px);
   font-size: 11px;
-  letter-spacing: .1em;
-  color: #071016;
-  background: var(--text-dim);
+  color: var(--ed-dim);
+  white-space: nowrap;
+  transform: translateY(-50%);
 }
-.node__cost { font-size: 10px; opacity: .78; }
-.node__body { padding: 7px 9px; font-size: 11px; color: var(--text-dim); letter-spacing: .06em; }
-.node__ports { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 9px 8px; }
-.node__port {
-  font-size: 10px; letter-spacing: .08em;
-  border: 1px solid var(--line-2);
-  padding: 1px 6px;
-  color: var(--text-faint);
-}
-.node__port[data-taken] { color: var(--green); border-color: var(--green-dim); background: rgba(110, 231, 160, .07); }
-
-.node[data-live] {
-  border-color: var(--amber);
-  box-shadow: 0 0 0 1px rgba(242, 193, 78, .35), 0 0 18px rgba(242, 193, 78, .16);
-}
-
-.node--action   .node__head { background: var(--red); }
-.node--sensing  .node__head { background: var(--cyan); }
-.node--condition .node__head { background: var(--blue); }
-.node--flow     .node__head { background: var(--violet); }
-.node--memory   .node__head { background: var(--gold); }
-.node--source   .node__head { background: var(--green); }
-.node--event    .node__head { background: var(--amber); }
-
-.wirelink {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 10px; letter-spacing: .14em; color: var(--text-faint);
-  padding-left: 9px;
-}
-.wirelink::before { content: ""; width: 20px; height: 1px; background: var(--green-dim); }
+.gport__label[data-taken] { color: var(--ed-wire-hot); }
 
 /* ------------------------------------------------------------ screenshots */
 
@@ -892,7 +995,9 @@ footer a { color: var(--text-dim); }
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 960px) {
-  .hero__grid, .demo, .board-wrap, .wiki, .two { grid-template-columns: 1fr; }
+  /* .demo is a single-column row grid already — leaving it out keeps its
+   * minmax(0,1fr) track, which is what lets the node canvas scroll. */
+  .hero__grid, .board-wrap, .wiki, .two { grid-template-columns: 1fr; }
   .wiki__side { position: static; }
   .row { grid-template-columns: 1fr; gap: 4px; }
 }
