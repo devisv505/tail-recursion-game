@@ -43,6 +43,43 @@ from running the files through Jekyll.
 If you would rather not use the workflow, **Settings → Pages → Deploy from a
 branch → `main` / root** serves the same files.
 
+### The custom domain
+
+The site is served at **tailrecursiongame.com**. Two things make that work, and
+both are already in the repository:
+
+- [`CNAME`](CNAME) at the root, holding the bare domain — no protocol, no
+  trailing slash.
+- **Settings → Pages → Custom domain → `tailrecursiongame.com`**, then tick
+  **Enforce HTTPS** once the certificate is issued. That can take up to an hour
+  after DNS resolves, and the checkbox stays greyed out until it does.
+
+`tailrecursiongame.com` is an apex domain, so it needs **A records**, not a
+CNAME record — a CNAME at the apex is illegal in DNS and most registrars will
+refuse it. At your DNS provider:
+
+| Type | Name | Value |
+|---|---|---|
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| CNAME | `www` | `devisv505.github.io.` |
+
+Check those addresses against GitHub's own docs before pasting them; they are
+stable but they are GitHub's to change. The `www` record is what lets
+`www.tailrecursiongame.com` redirect to the apex rather than fail.
+
+Nothing else needs editing. The deploy workflow reads the published URL from
+`actions/configure-pages`, which returns the custom domain once it is set — so
+canonical tags, `og:url` and `sitemap.xml` all switch from the
+`github.io/tail-recursion-game/` URLs to `tailrecursiongame.com` on the next
+deploy with no change here.
+
+**Do not delete `CNAME`.** With the Actions deployment method the uploaded
+artifact is the whole site, and a deploy without that file can drop the custom
+domain from the Pages settings.
+
 ## The three links
 
 Edit `links` in [`assets/js/config.js`](assets/js/config.js):
