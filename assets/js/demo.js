@@ -22,17 +22,19 @@
   // Laid out the way the editor lays a graph out: left to right, branches
   // fanning vertically. `step` is the index in the exec chain the editor draws
   // in the node's bottom-right corner.
-  var NODE_W = 170, PORT_Y = 34, PORT_GAP = 22;
+  // The gaps are wide enough for a port label to sit in clear air between two
+  // nodes: at 20px the `out` label landed underneath the node to its right.
+  var NODE_W = 170, PORT_Y = 34, PORT_GAP = 26;
 
   var PROGRAM = [
     { id: 'start', name: 'Start', cat: 'event', cost: 0, step: 1,
       x: 20, y: 88, entry: true, ports: ['out'] },
     { id: 'wall_ahead', name: 'Wall Ahead?', cat: 'sensing', cost: 1, step: 2,
-      x: 210, y: 88, ports: ['yes', 'no'] },
+      x: 252, y: 88, ports: ['yes', 'no'] },
     { id: 'turn_right', name: 'Turn Right', cat: 'action', cost: 1, step: 3,
-      x: 440, y: 20, ports: ['out'] },
+      x: 520, y: 20, ports: ['out'] },
     { id: 'move_forward', name: 'Move Forward', cat: 'action', cost: 1, step: 3,
-      x: 440, y: 156, ports: ['out'] },
+      x: 520, y: 156, ports: ['out'] },
   ];
 
   // from-node index, its port, to-node index.

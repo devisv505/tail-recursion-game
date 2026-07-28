@@ -17,13 +17,27 @@
  */
 
 import { readFile, writeFile, stat } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const RAW = process.argv[2] || process.env.SITE_URL || '';
-const BASE = RAW.replace(/\/+$/, '');
+/* The domain, in order of authority: an explicit argument, the environment,
+ * then the CNAME file. The CNAME fallback matters — without it, running this
+ * with no arguments would blank the canonical tags of a site that has a
+ * perfectly good domain sitting right there in the repository. */
+function detectBase() {
+  const given = process.argv[2] || process.env.SITE_URL || '';
+  if (given) return given;
+  try {
+    const cname = readFileSync(join(ROOT, 'CNAME'), 'utf8').trim();
+    if (cname) return 'https://' + cname;
+  } catch { /* no custom domain — fall through */ }
+  return '';
+}
+
+const BASE = detectBase().replace(/\/+$/, '');
 
 const STUDIO = 'DEV505';
 const YOUTUBE = 'https://www.youtube.com/@devisv505';

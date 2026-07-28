@@ -2,9 +2,10 @@
 # ships, and it is produced by merging this into it.
 data/blocks.generated.json
 
-# Written by tools/build-seo.mjs at deploy time, from the URL GitHub Pages
-# actually published to. Committing one would hardcode a guess.
-sitemap.xml
+# sitemap.xml is committed, not ignored. It was ignored while the site had no
+# domain and the URL had to come from the deployment; now that CNAME pins it to
+# tailrecursiongame.com there is nothing to guess, and committing it means the
+# file is served whichever way Pages is set to deploy.
 
 # Local preview server config, machine-specific paths.
 .claude/launch.json
