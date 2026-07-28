@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authoring — blocks, levels and the Lua API — Tail Recursion</title>
+<meta name="description" content="How to add blocks and write levels for Tail Recursion: the register_block fields, the full ctx sensor and action API, the sandbox whitelist, and every key in the .level and .graph formats.">
+<meta name="theme-color" content="#070a0e">
+<meta name="author" content="DEV505">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Tail Recursion">
+<meta property="og:locale" content="en">
+<meta property="og:title" content="Authoring — Tail Recursion">
+<meta property="og:description" content="Add your own blocks and levels. The full Lua API, the sandbox, and every key in the level format.">
+<meta name="twitter:card" content="summary">
+
+<!-- seo:start --><!-- seo:end -->
+
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Tail Recursion — home">
+      <svg id="brandmark" role="img" aria-label="Tail Recursion"></svg>
+      <span class="tag">DEV505</span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav">MENU</button>
+    <nav class="nav" id="nav">
+      <a href="index.html#game">The Game</a>
+      <a href="index.html#run">How It Runs</a>
+      <a href="wiki.html">Blocks</a>
+      <a href="authoring.html" aria-current="page">Authoring</a>
+      <a href="index.html#standings">Standings</a>
+      <a href="index.html#community">Community</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section style="padding-top:48px">
+  <div class="wrap">
+    <p class="eyebrow">Authoring</p>
+    <h1>Add your own blocks and levels</h1>
+    <p class="lede dim" style="max-width:78ch;margin-top:14px">
+      A mod adds <span class="hl">blocks</span> and <span class="hl">items</span> in Lua. It
+      cannot change the rules of the game, and it does not need to: the snake's whole
+      behaviour is built out of blocks, so a mod that adds blocks adds things players can now
+      build.
+    </p>
+    <p class="dim" style="max-width:78ch">
+      Mods use the same two registration calls as the base game, run in the same sandbox, and
+      get the same budget. If you can read <code>lua/blocks/core.lua</code>, you can already
+      write the equivalent block in a mod. Levels are a separate, simpler thing — a plain text
+      file with a map drawn in it — and they are covered in
+      <a href="#levels">part two</a>.
+    </p>
+
+    <div class="cta">
+      <a class="btn" href="#blocks"><span class="btn__dot"></span>Blocks</a>
+      <a class="btn" href="#api"><span class="btn__dot"></span>The API</a>
+      <a class="btn" href="#levels"><span class="btn__dot"></span>Levels</a>
+      <a class="btn" href="#graphs"><span class="btn__dot"></span>Programs</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<section id="blocks">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Part one</p>
+    <h2>Blocks</h2>
+
+    <div class="step"><span class="step__n">01</span><h3>Make the folder</h3></div>
+    <p class="dim"><code>init.lua</code> is the only file the game loads. That is the whole
+      installation process — drop the folder in <code>mods/</code> and start the game.</p>
+
+<pre class="code" data-lang="level">mods/
+  my_mod/
+    init.lua</pre>
+
+    <p class="dim">Load order is <b class="hl">alphabetical by folder name</b>, and mods always
+      load <em>after</em> the built-in content. Both <code>lua/</code> and
+      <code>mods/</code> hot-reload while the game runs, so you should not need to restart
+      while writing one.</p>
+
+    <div class="step"><span class="step__n">02</span><h3>Write a block</h3></div>
+    <p class="dim">Put this in <code>init.lua</code> and run the game.</p>
+
+<pre class="code" data-lang="lua">register_block {
+    id       = "my_mod_turn_at_walls",
+    name     = "Wall Panic",
+    category = "sensing",
+    module   = "sensor",   -- it touches the world, so it needs the hardware
+    cost     = 1,
+    exec     = { "blocked", "clear" },
+    execute  = function(ctx)
+        return ctx.sensor.touch().forward == "wall" and "blocked" or "clear"
+    end,
+}</pre>
+
+    <div class="warn">
+      <b>Prefix every id with your mod's name</b>
+      Ids are global and duplicates are <em>rejected</em>, not merged. Because mods load after
+      the built-ins, a clash means <em>your</em> definition is the one that fails to load —
+      deliberately, so a mod cannot silently replace a built-in block's behaviour.
+    </div>
+
+    <div class="step"><span class="step__n">03</span><h3>The fields</h3></div>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td class="t">string</td>
+            <td>Unique across the whole game. Prefix it with your mod name.</td></tr>
+          <tr><td>name</td><td class="t">string</td>
+            <td>Shown in the editor. Keep it short — the block header is narrow.</td></tr>
+          <tr><td>category</td><td class="t">string</td>
+            <td><code>action</code>, <code>sensing</code>, <code>condition</code>,
+              <code>flow</code>, <code>memory</code>, <code>source</code>,
+              <code>event</code>. Decides the header colour and where it sits in the list.</td></tr>
+          <tr><td>cost</td><td class="t">int</td>
+            <td><b>Ops.</b> Charged against the player's 10-per-tick budget. Most blocks are
+              1; real sensing is worth 2.</td></tr>
+          <tr><td>module</td><td class="t">string?</td>
+            <td>The body module this needs: <code>sensor</code>, <code>memory</code> or
+              <code>processor</code>. Declare <code>sensor</code> on anything calling
+              <code>look</code>, <code>smell</code> or <code>touch</code>.</td></tr>
+          <tr><td>params</td><td class="t">list</td>
+            <td>Values edited on the block itself. Each is
+              <code>{ id, type, default, min, max, options, desc }</code>.</td></tr>
+          <tr><td>inputs</td><td class="t">list</td>
+            <td>Typed data inputs pulled from other blocks' outputs.
+              <code>{ id, type, default, desc }</code>.</td></tr>
+          <tr><td>outputs</td><td class="t">list</td>
+            <td>Typed data outputs other blocks can read. <code>{ id, type, desc }</code>.</td></tr>
+          <tr><td>exec</td><td class="t">list</td>
+            <td>Branch labels — <code>{ "yes", "no" }</code>, or
+              <code>{ { "yes", desc = "…" } }</code> to document them.
+              <b>Its presence decides the block's shape.</b></td></tr>
+          <tr><td>exec_in</td><td class="t">bool</td>
+            <td>Set <code>false</code> to refuse an incoming exec wire. Only
+              <code>Start</code> does this.</td></tr>
+          <tr><td>desc</td><td class="t">string</td>
+            <td>The help text. This is what the wiki and the in-game info panel show.</td></tr>
+          <tr><td>execute</td><td class="t">function</td>
+            <td><code>function(ctx, inp, p)</code> returning
+              <code>branch_label, outputs_table</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="dim">Types you can use for params, inputs and outputs:
+      <code>int</code>, <code>float</code>, <code>bool</code>, <code>string</code>,
+      <code>direction</code>, <code>cell_kind</code>, <code>any</code>. Data wiring is
+      type-checked at load — a <code>direction</code> output only connects to a
+      <code>direction</code> or <code>any</code> input.</p>
+
+    <div class="step"><span class="step__n">04</span><h3>The three shapes</h3></div>
+    <p class="dim">Shape is <b class="hl">derived</b> from the definition, not declared, and
+      it is the easiest thing to get wrong.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Shape</th><th><code>exec</code></th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td>Branching</td><td class="t">present, non-empty</td>
+            <td>Exec in, one labelled exec out per entry.</td></tr>
+          <tr><td>Terminal</td><td class="t">present, empty <code>{}</code></td>
+            <td>Exec in, nothing after. Ends the program — only <code>Stop</code> does this.</td></tr>
+          <tr><td>Source</td><td class="t">absent</td>
+            <td>No exec ports at all. Never in the control flow; runs only when a data wire
+              reads it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn">
+      <b>Omitting exec does not mean "ends the tick"</b>
+      It makes a <em>source node</em>, which will never run in the control flow. If you meant
+      "this ends the tick", write <code>exec = {}</code>. A source node must also declare at
+      least one output, or nothing can ever reach it — the loader rejects that.
+    </div>
+
+    <div class="step"><span class="step__n">05</span><h3>Writing an action block</h3></div>
+    <p class="dim">An action is any block that calls something on <code>ctx.act</code>.
+      Doing so resolves the tick's single action and suspends the thread — so an action block
+      still declares an exec output, because execution resumes there on the following tick.</p>
+
+<pre class="code" data-lang="lua">-- A step that only moves when the way is clear, and burns the tick
+-- standing still when it is not. Two ops: it senses and it acts.
+register_block {
+    id       = "my_mod_step_safely",
+    name     = "Step If Clear",
+    category = "action",
+    module   = "sensor",
+    cost     = 2,
+    desc     = "Moves one cell forward when nothing is in the way, and waits " ..
+               "the tick out when something is. Either way the tick ends here.",
+    exec = {
+        { "moved",   desc = "the way was clear and the snake advanced" },
+        { "blocked", desc = "something was in the way, so it waited instead" },
+    },
+    execute = function(ctx)
+        local ahead = ctx.sensor.touch().forward
+        if ahead == "wall" or ahead == "body" or ahead == "door" then
+            ctx.act.wait()
+            return "blocked"
+        end
+        ctx.act.move()
+        return "moved"
+    end,
+}</pre>
+
+    <div class="warn">
+      <b>One action per tick, and the tick ends there</b>
+      Calling two actions in one <code>execute</code> is not twice as fast — the first one
+      ends the tick. Return the branch the thread should resume from, and let the next tick
+      do the next thing.
+    </div>
+
+    <div class="step"><span class="step__n">06</span><h3>Exec wires push, data wires pull</h3></div>
+    <p class="dim">
+      <b class="hl">Exec wires</b> carry control flow. Evaluation follows them from the entry
+      node, and your <code>execute</code> returns a branch label saying which one to take.
+      They may contain cycles — that is how a loop is written, and the ops budget makes it
+      safe.
+    </p>
+    <p class="dim">
+      <b class="hl">Data wires</b> carry values. Reading an input <em>executes the source node
+      on demand</em>, charges its ops, and caches it for the rest of the tick. So a source
+      node nobody reads costs nothing, and a value read twice in one tick is computed once.
+      Data wires must be acyclic.
+    </p>
+
+    <div class="step"><span class="step__n">07</span><h3>Items</h3></div>
+<pre class="code" data-lang="lua">register_item { id = "my_mod_plum", name = "Plum", weight = 5, score = 4, grows = true }</pre>
+    <p class="dim"><code>weight</code> is its share of the spawn roll against every other item;
+      <code>score</code> is its base value before the combo multiplier; <code>grows</code> is
+      whether eating it lengthens the snake.</p>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<section id="api">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Reference</p>
+    <h2>The API your block receives</h2>
+
+<pre class="code" data-lang="lua">execute = function(ctx, inp, p)</pre>
+
+    <p class="dim"><code>inp</code> holds your data inputs by id — an unwired input falls back
+      to its <code>default</code>. <code>p</code> holds your params by id. Everything else
+      hangs off <code>ctx</code>.</p>
+
+    <h3 class="amber" style="margin-top:34px">ctx.sensor</h3>
+    <p class="dim" style="margin-top:8px">Directions are <b class="hl">snake-relative</b>
+      strings: <code>"FORWARD"</code>, <code>"LEFT"</code>, <code>"RIGHT"</code>,
+      <code>"BACK"</code>. Cell kinds are <code>"wall"</code>, <code>"body"</code>,
+      <code>"apple"</code>, <code>"empty"</code>, <code>"exit"</code>, <code>"door"</code>,
+      <code>"switch"</code>.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Call</th><th>Returns</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>touch()</td><td class="t">{ forward, left, right }</td>
+            <td>The three cells around the head, as cell kinds. Works in every direction at
+              baseline. <b>Needs a Sensor Segment.</b></td></tr>
+          <tr><td>look(dir, dist)</td><td class="t">{ kind, distance, solid }</td>
+            <td>Casts a ray and stops at the first cell that is not empty. Range is capped at
+              3 by the segment. <b>Needs a Sensor Segment.</b></td></tr>
+          <tr><td>smell()</td><td class="t">{ found, dir, distance }</td>
+            <td>The nearest item within radius 5. <code>found</code> is false when nothing is
+              in range. <b>Needs a Sensor Segment.</b></td></tr>
+          <tr><td>self()</td><td class="t">{ length, … }</td>
+            <td>Self-knowledge. Needs no hardware.</td></tr>
+          <tr><td>position()</td><td class="t">{ x, y }</td>
+            <td>Where the head is on the board.</td></tr>
+          <tr><td>tick()</td><td class="t">int</td>
+            <td>Ticks elapsed since the run began. Needs no hardware.</td></tr>
+          <tr><td>random(n)</td><td class="t">int</td>
+            <td>0 to n−1, from the seeded generator. <b>Always use this</b> — see the sandbox
+              note below.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">ctx.act</h3>
+    <p class="dim" style="margin-top:8px">Calling any of these resolves the tick's one action
+      and suspends execution at your block.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Call</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>move()</td><td>Advance one cell in the direction the head faces.</td></tr>
+          <tr><td>turn_left()</td><td>Rotate 90° counter-clockwise without moving.</td></tr>
+          <tr><td>turn_right()</td><td>Rotate 90° clockwise without moving.</td></tr>
+          <tr><td>wait()</td><td>Spend the tick doing nothing.</td></tr>
+          <tr><td>wait_ticks(n)</td><td>Park the thread for n ticks. The extra ticks cost no ops.</td></tr>
+          <tr><td>stop()</td><td>Halt the program. Execution does not resume.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">ctx.mem, ctx.state and ctx.log</h3>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Name</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td>ctx.mem.get(i)</td>
+            <td>Read register <code>i</code>. Zero if nothing was written there.</td></tr>
+          <tr><td>ctx.mem.set(i, v)</td>
+            <td>Write register <code>i</code>. Registers are <b>shared by the whole
+              program</b> and persist across ticks. Baseline is 2 slots; each Memory Segment
+              adds 2.</td></tr>
+          <tr><td>ctx.state</td>
+            <td>A private table for <b>this node instance</b>, persisting across ticks. Use it
+              for counters and timers so they do not burn a shared register — this is how
+              <code>Repeat N Times</code> counts.</td></tr>
+          <tr><td>ctx.log(…)</td>
+            <td>Shows up in the in-game inspector. Your debugger.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">The sandbox</h3>
+    <p class="dim" style="margin-top:8px">Your code runs in a whitelist. Available:
+      <code>math</code> (without <code>random</code>), <code>string</code>,
+      <code>table</code>, <code>pairs</code>, <code>ipairs</code>, <code>next</code>,
+      <code>type</code>, <code>tostring</code>, <code>tonumber</code>, <code>select</code>,
+      <code>error</code>, <code>assert</code>. Each file gets its <em>own copies</em> of
+      <code>math</code>, <code>string</code> and <code>table</code>, so overwriting
+      <code>string.format</code> in your mod cannot change anyone else's code.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Absent</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>io, os</td><td>Filesystem and process access. A mod is content, not a program.</td></tr>
+          <tr><td>load, dofile, require, package</td><td>Would route straight around this whitelist.</td></tr>
+          <tr><td>debug</td><td>Reaches into other environments and upvalues.</td></tr>
+          <tr><td>pcall, xpcall</td><td>Would let a mod swallow the watchdog error and loop forever.</td></tr>
+          <tr><td>setmetatable, getmetatable, raw*</td><td>Metatable surgery on shared values.</td></tr>
+          <tr><td>collectgarbage</td><td>Lets a mod stall the process legitimately.</td></tr>
+          <tr><td>math.random</td><td>Use <code>ctx.sensor.random(n)</code>.</td></tr>
+          <tr><td>print, _G</td><td>No stdout, no global escape hatch.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn">
+      <b>Never bring your own randomness</b>
+      The whole game replays from a seed — same seed, same run, every time. A second source of
+      randomness breaks that, which is why <code>math.random</code> is not there to reach for.
+    </div>
+
+    <div class="warn">
+      <b>A broken block never takes down the game</b>
+      A mod that throws while loading is disabled and named, with the Lua line number; every
+      other mod carries on. A block that throws while running ends that tick with the error in
+      the inspector. Separately, every chunk runs under an instruction watchdog, so an
+      infinite loop kills your block rather than the app — and the player is never charged for
+      it.
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<section id="levels">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Part two</p>
+    <h2>Levels</h2>
+    <p class="lede dim" style="max-width:78ch;margin-top:14px">
+      A level is a plain text file in <code>levels/</code>, with the map drawn in it as
+      characters. Lines starting with <code>#</code> are comments. Here is a complete one —
+      the fifth puzzle, whose solution is the three-block program on the front page.
+    </p>
+
+    <p class="code-label"><span>levels/puzzles/04_perimeter.level</span><span>complete file</span></p>
+<pre class="code" data-lang="level"># Puzzle 4 — the first sensor. A ring around a block, solved by two blocks
+# and a wall sense: if the wall is ahead turn right, otherwise walk.
+id p04_perimeter
+name Perimeter
+desc Keep one hand on the wall and walk.
+size 14 10
+heading EAST
+length 3
+modules sensor
+seed 104
+objective reach_exit
+bonus within_ticks 26
+tick_limit 100
+stall_limit 20
+blocks start move_forward turn_left turn_right repeat_n wall_ahead if_else
+hint Wall Ahead? yes: Turn Right. no: Move Forward.
+hint That is the whole program.
+row ##############
+row #..S.........#
+row #.##########.#
+row #.##########.#
+row #.##########.#
+row #.##########.#
+row #.##########.#
+row #.##########.#
+row #.........E..#
+row ##############</pre>
+
+    <h3 class="amber" style="margin-top:38px">Every key</h3>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Key</th><th>Takes</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td class="t">word</td><td>Unique id. Progress is saved against it, so renaming one orphans its records.</td></tr>
+          <tr><td>name</td><td class="t">text</td><td>Shown in the level list and the header.</td></tr>
+          <tr><td>desc</td><td class="t">text</td><td>One line under the name.</td></tr>
+          <tr><td>size</td><td class="t">w h</td><td>Board dimensions. Must come before any <code>row</code>.</td></tr>
+          <tr><td>heading</td><td class="t">NORTH…</td><td>Which way the snake faces at tick zero.</td></tr>
+          <tr><td>length</td><td class="t">int</td><td>Starting body length, counting the head.</td></tr>
+          <tr><td>modules</td><td class="t">list</td><td>One per segment behind the head, neck first: <code>sensor</code>, <code>memory</code>, <code>processor</code>. This is what gates the sensing blocks.</td></tr>
+          <tr><td>seed</td><td class="t">int</td><td>The run's seed. Same seed, same run.</td></tr>
+          <tr><td>objective</td><td class="t">kind [n]</td><td>A requirement. Repeat the key for more than one.</td></tr>
+          <tr><td>bonus</td><td class="t">kind [n]</td><td>Same kinds, but optional — worth score rather than required.</td></tr>
+          <tr><td>objective_mode</td><td class="t">all | any | sequence</td><td>How multiple objectives combine. Default <code>all</code>.</td></tr>
+          <tr><td>tick_limit</td><td class="t">int</td><td>Fail after this many ticks.</td></tr>
+          <tr><td>stall_limit</td><td class="t">int</td><td>Fail after this many consecutive ticks with no action — catches a program that can never reach one.</td></tr>
+          <tr><td>blocks</td><td class="t">list</td><td>Which block ids the editor offers. This is the difficulty dial: the same map is a different puzzle with a shorter list.</td></tr>
+          <tr><td>hint</td><td class="t">text</td><td>One line of the in-level hint panel. Repeat for more lines.</td></tr>
+          <tr><td>food</td><td class="t">random</td><td>Spawn items randomly. A fixed item is placed with <code>o</code> on the map instead.</td></tr>
+          <tr><td>entity</td><td class="t">see below</td><td>A switch or a door.</td></tr>
+          <tr><td>row</td><td class="t">map</td><td>One row of the map. Must be exactly <code>size</code> wide.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn">
+      <b>A short row is a load failure, not a pad</b>
+      Padding one quietly would delete the right-hand wall, which is much harder to notice
+      than a refusal to load.
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">The map</h3>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Char</th><th>Tile</th></tr></thead>
+        <tbody>
+          <tr><td>#</td><td>Wall.</td></tr>
+          <tr><td>.</td><td>Floor.</td></tr>
+          <tr><td>S</td><td>Where the snake's head starts.</td></tr>
+          <tr><td>E</td><td>The exit.</td></tr>
+          <tr><td>o</td><td>An item. Every <code>o</code> places one, and authoring order is list order.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="dim">Anything else fails the load with the character named. Switches and doors
+      are not map characters — they are <code>entity</code> lines, because they carry state
+      and links.</p>
+
+    <h3 class="amber" style="margin-top:34px">Objectives and bonuses</h3>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Kind</th><th>Amount</th><th>Met when</th></tr></thead>
+        <tbody>
+          <tr><td>reach_exit</td><td class="t">—</td><td>The head reaches the <code>E</code> tile.</td></tr>
+          <tr><td>collect</td><td class="t">n</td><td>n items have been eaten.</td></tr>
+          <tr><td>grow_to</td><td class="t">n</td><td>The snake reaches length n.</td></tr>
+          <tr><td>survive</td><td class="t">n</td><td>n ticks pass without failing.</td></tr>
+          <tr><td>within_ticks</td><td class="t">n</td><td>The level is finished in n ticks or fewer.</td></tr>
+          <tr><td>max_blocks</td><td class="t">n</td><td>The program uses n blocks or fewer.</td></tr>
+          <tr><td>activate_switches</td><td class="t">n</td><td>n switches have been pressed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="dim"><code>within_ticks</code> and <code>max_blocks</code> are the two that make
+      good bonuses: they ask for a better program rather than a different one.</p>
+
+    <h3 class="amber" style="margin-top:34px">Switches and doors</h3>
+
+<pre class="code" data-lang="level">entity gate  door   9 4  start=closed
+entity plate switch 3 7  mode=once links=gate</pre>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Option</th><th>On</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>start=open|closed</td><td class="t">door</td><td>Its state at tick zero. A closed door blocks; an open one reads as empty floor.</td></tr>
+          <tr><td>mode=toggle|once</td><td class="t">switch</td><td>Whether stepping on it again flips it back, or it latches.</td></tr>
+          <tr><td>links=a,b</td><td class="t">switch</td><td>Comma-separated entity ids this switch drives.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">Testing it</h3>
+<pre class="code" data-lang="graph">./build/snake_v2 --level levels/my_level.level</pre>
+    <p class="dim">That skips the menu and opens your level directly, paused at tick zero.
+      Press space to run it.</p>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<section id="graphs">
+  <div class="wrap" style="max-width:900px">
+    <p class="eyebrow">Part three</p>
+    <h2>Programs</h2>
+    <p class="lede dim" style="max-width:78ch;margin-top:14px">
+      Programs live in <code>programs/*.graph</code> and are plain text too — the editor reads
+      and writes the same format, so a graph is hand-editable and diffable. This is the
+      Perimeter solution written out.
+    </p>
+
+<pre class="code" data-lang="graph">entry begin
+
+node begin start
+node look  wall_ahead
+node turn  turn_right
+node walk  move_forward
+
+exec begin out     look
+exec look  yes     turn
+exec look  no      walk</pre>
+
+    <p class="dim">Neither action wires its <code>out</code> anywhere. That is not an
+      omission: a chain that runs out of wire returns to Start on the next tick, so the loop
+      is already written. Wiring the actions back to <code>look</code> by hand would say what
+      the runtime already does.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Directive</th><th>Syntax</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>entry</td><td class="t">entry &lt;node&gt;</td><td>Where the resumable thread begins. Exactly one.</td></tr>
+          <tr><td>on_tick</td><td class="t">on_tick &lt;node&gt;</td><td>A second, re-entrant entry point that runs from its own top every tick. For reflexes.</td></tr>
+          <tr><td>node</td><td class="t">node &lt;id&gt; &lt;block&gt; [k=v …]</td><td>An instance of a block, with its params.</td></tr>
+          <tr><td>exec</td><td class="t">exec &lt;from&gt; &lt;branch&gt; &lt;to&gt;</td><td>A control-flow wire from a named branch.</td></tr>
+          <tr><td>data</td><td class="t">data &lt;from&gt; &lt;output&gt; &lt;to&gt; &lt;input&gt;</td><td>A value wire between ports.</td></tr>
+          <tr><td>off</td><td class="t">off &lt;node&gt;</td><td>Disable a node without deleting it. May precede its <code>node</code> line.</td></tr>
+          <tr><td>at</td><td class="t">at &lt;node&gt; &lt;x&gt; &lt;y&gt;</td><td>Canvas position. Layout only — it never affects behaviour.</td></tr>
+          <tr><td>note</td><td class="t">note &lt;id&gt; &lt;x&gt; &lt;y&gt; &lt;text&gt;</td><td>A comment pinned to the canvas.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="amber" style="margin-top:34px">Running one headless</h3>
+<pre class="code" data-lang="graph">./build/snake_v2 --run-program programs/mine.graph --seed 1
+./build/snake_v2 --run-program programs/mine.graph --program-trace --ticks 40</pre>
+    <p class="dim">The first prints survival, items eaten and peak ops. The second adds a line
+      per tick showing which blocks ran, what they decided and the action taken — which is the
+      fastest way to find the tick where a program goes wrong.</p>
+
+    <div class="cta" style="margin-top:34px">
+      <a class="btn" href="wiki.html"><span class="btn__dot"></span>Every block and its ports</a>
+      <a class="btn" href="index.html#run"><span class="btn__dot"></span>Watch a program run</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Tail Recursion &mdash; a game by DEV505.</span>
+    <span><a href="index.html">Back to the game</a> &nbsp;·&nbsp; <a href="https://www.youtube.com/@devisv505" rel="noopener">YouTube</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/pixel.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/code.js"></script>
+</body>
+</html>

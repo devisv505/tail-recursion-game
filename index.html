@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tail Recursion — a snake game where you never steer</title>
+<meta name="description" content="Tail Recursion is a grid puzzle game where you never steer the snake. You wire its program from blocks and it executes one tick at a time. 6 tutorials, 100 puzzles, free play. By DEV505.">
+<meta name="theme-color" content="#070a0e">
+<meta name="author" content="DEV505">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tail Recursion">
+<meta property="og:locale" content="en">
+<meta property="og:title" content="Tail Recursion">
+<meta property="og:description" content="You never steer the snake. You program it — and its body is the computer that runs the program.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tail Recursion">
+<meta name="twitter:description" content="You never steer the snake. You program it — and its body is the computer that runs the program.">
+
+<!-- Canonical URL, og:url and JSON-LD are written by tools/build-seo.mjs at
+     deploy time, from the URL GitHub Pages actually publishes to. -->
+<!-- seo:start --><!-- seo:end -->
+
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Tail Recursion — home">
+      <svg id="brandmark" role="img" aria-label="Tail Recursion"></svg>
+      <span class="tag">DEV505</span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav">MENU</button>
+    <nav class="nav" id="nav">
+      <a href="#game">The Game</a>
+      <a href="#run">How It Runs</a>
+      <a href="#screens">Screens</a>
+      <a href="wiki.html">Blocks</a>
+      <a href="authoring.html">Authoring</a>
+      <a href="#standings">Standings</a>
+      <a href="#community">Community</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ------------------------------------------------------------------ hero -->
+<div class="hero">
+  <div class="hero__glow"></div>
+  <div class="wrap">
+    <h1>
+      <span class="vh">Tail Recursion — a snake game where you never steer</span>
+      <svg class="wordmark" id="wordmark" aria-hidden="true"></svg>
+    </h1>
+    <p class="hero__tag">You never steer the snake. <span class="hl">You program it.</span></p>
+
+    <div class="hero__grid">
+      <div class="hero__pitch">
+        <p class="lede">
+          There are no steering keys. The snake moves only when the program you built
+          tells it to — and you build that program by dragging blocks onto a canvas and
+          wiring them together.
+        </p>
+        <p>
+          Every block is a small piece of thought: <span class="hl">Wall Ahead?</span>,
+          <span class="hl">Repeat N Times</span>, <span class="hl">Turn Right</span>. Wire them
+          into a chain and you have made something that walks a corridor. Wire them into a
+          cycle and you have made something that solves a maze it has never seen.
+        </p>
+        <p>
+          The twist is where the hardware lives. <span class="hl">The snake's body is its
+          computer.</span> A Sensor Segment is what lets it see; a Processor Segment is what
+          lets it think longer each tick. Every segment you add is a capability gained and a
+          cell of manoeuvring room lost. That tension is the game.
+        </p>
+
+        <div class="cta" id="cta"></div>
+      </div>
+
+      <aside class="panel panel--bracket attract" aria-label="Title screen menu">
+        <ul id="attract-menu"></ul>
+        <p class="attract__hint">arrows or mouse&nbsp;&nbsp;&nbsp;enter to choose</p>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ------------------------------------------------------------- the game -->
+<section id="game">
+  <div class="wrap">
+    <p class="eyebrow">What it is</p>
+    <h2>A puzzle game about writing a thing that solves the puzzle</h2>
+    <p class="lede dim" style="max-width:74ch;margin-top:14px">
+      Load a level. Read the objective. Assemble the snake's logic, run it, watch the active
+      block light up, find the tick where it went wrong, fix that block and run again — without
+      ever reloading the level.
+    </p>
+
+    <div class="cards" style="margin-top:34px">
+      <article class="card">
+        <span class="card__n">01</span>
+        <h3>One tick, one action</h3>
+        <p>
+          A tick ends the moment the program reaches Move Forward, Turn, Wait or Stop. Turning
+          and moving are separate actions, so a full reversal costs two ticks — and a tick that
+          reaches no action at all just leaves the snake standing still. That is a normal
+          outcome, not an error.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card__n">02</span>
+        <h3>Execution is resumable</h3>
+        <p>
+          Your program is a thread with a program counter that survives between ticks, not a
+          fresh traversal each frame. A chain of three actions takes three ticks and then loops.
+          Ending a chain <em>is</em> "start again next tick" — which is why most graphs need no
+          loop wiring at all.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card__n">03</span>
+        <h3>Ten ops a tick</h3>
+        <p>
+          Thinking is rationed. Most blocks cost one op, scanning costs two, and constants cost
+          nothing. Run out mid-tick and execution suspends exactly where it stood and resumes
+          there — a starved program gets slower, never silent. Want more? Grow a Processor
+          Segment. Now you are longer.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card__n">04</span>
+        <h3>Blocks are Lua, all the way down</h3>
+        <p>
+          Every block in the game — including the ones in the tutorials — is a Lua table
+          registered at load. Nothing about a block's meaning is hardcoded in the engine, so a
+          mod is not a lesser citizen: it calls the same <code>register_block</code> the base
+          game does.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card__n">05</span>
+        <h3>The same seed, the same run</h3>
+        <p>
+          One seeded generator drives everything, including the resume point. A replay is
+          identical tick for tick — proven byte-identical across MSVC on x64 and clang on
+          arm64. Randomness that is not reproducible would make a puzzle unsolvable rather
+          than interesting.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card__n">06</span>
+        <h3>Stop means stop</h3>
+        <p>
+          Stopping a run restores the exact initial state — verified by hash, not by eye. You
+          can iterate on a program forty times in a minute and the fortieth run starts from
+          precisely the same board as the first.
+        </p>
+      </article>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>6</b><span>Tutorials</span></div>
+      <div class="stat"><b>100</b><span>Puzzles</span></div>
+      <div class="stat"><b>37</b><span>Built-in blocks</span></div>
+      <div class="stat"><b>10</b><span>Ops per tick</span></div>
+      <div class="stat"><b>2</b><span>Platforms</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------- run it -->
+<section id="run">
+  <div class="wrap">
+    <p class="eyebrow">How it runs</p>
+    <h2>Three blocks that walk any room</h2>
+    <p class="lede dim" style="max-width:74ch;margin-top:14px">
+      This is the whole solution to <span class="hl">Perimeter</span>, the fifth puzzle. Wall
+      Ahead? yes to Turn Right, no to Move Forward. Watch which block lights up each tick —
+      that highlight is exactly what the game draws while a program runs.
+    </p>
+
+    <div class="demo" style="margin-top:30px">
+      <div class="demo__stage">
+        <div class="board" id="board" role="img" aria-label="A snake walking the inside edge of a walled room, one cell per tick"></div>
+        <div class="demo__bar">
+          <span>tick <b id="d-tick">0</b></span>
+          <span>ops <b id="d-ops">0/10</b></span>
+          <span>len <b id="d-len">4</b></span>
+          <span id="d-act">stands still</span>
+          <span class="demo__ctrl">
+            <button class="btn" id="d-play" aria-label="Play or pause the demo">PAUSE</button>
+            <button class="btn" id="d-step" aria-label="Advance one tick">. STEP</button>
+          </span>
+        </div>
+      </div>
+      <div class="demo__side">
+        <p class="eyebrow" style="margin-bottom:16px">Program</p>
+        <div class="chain" id="chain"></div>
+      </div>
+    </div>
+
+    <div class="two" style="margin-top:40px">
+      <div>
+        <h3 class="amber">Why it loops forever</h3>
+        <p class="dim" style="margin-top:10px">
+          Nothing here wires back to the top. Both branches end at an action, the action ends
+          the tick, and a chain that has run out of wire returns to Start on its own. Only the
+          Stop block ever actually ends a program.
+        </p>
+      </div>
+      <div>
+        <h3 class="amber">Why it costs two ops</h3>
+        <p class="dim" style="margin-top:10px">
+          Wall Ahead? is one op, the action it branches to is another. Two of ten spent, eight
+          left over — which is the headroom the tutorials are balanced against. If the block
+          library ever cannot solve a tutorial within the baseline budget, the library is
+          wrong, not the budget.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- world -->
+<section id="world">
+  <div class="wrap">
+    <p class="eyebrow">The body is the computer</p>
+    <h2>Length buys capability and costs room</h2>
+
+    <dl class="rows" style="margin-top:28px">
+      <div class="row">
+        <dt>Sensor Segment</dt>
+        <dd>Grants the environmental senses whole: look along a ray to range 3, smell the
+          nearest item within radius 5, and touch all three cells around the head. Lose the
+          segment and every sensing block stops answering on the very next tick.</dd>
+      </div>
+      <div class="row">
+        <dt>Processor Segment</dt>
+        <dd>+5 ops per tick, on top of the baseline 10. The difference between a reflex and a
+          decision.</dd>
+      </div>
+      <div class="row">
+        <dt>Memory Segment</dt>
+        <dd>Two register slots each. Registers are shared by the whole graph and survive
+          between ticks — unlike a Counter block, whose count belongs to that node alone.</dd>
+      </div>
+      <div class="row">
+        <dt>Standard Segment</dt>
+        <dd>Length, and nothing else. Sometimes that is what you want and often it is not what
+          you can afford.</dd>
+      </div>
+    </dl>
+
+    <p class="dim" style="margin-top:22px;max-width:74ch">
+      A level decides which modules its snake carries. A block that needs hardware you do not
+      have is not hidden from you — it shows what it needs. A locked block is a goal, not a
+      surprise. Storage, Battery, Drill, Weapon and Signal segments are designed and not yet
+      built.
+    </p>
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------- screens -->
+<section id="screens">
+  <div class="wrap">
+    <p class="eyebrow">Screens</p>
+    <h2>The editor, the board and the inspector</h2>
+    <p class="lede dim" style="max-width:74ch;margin-top:14px">
+      Map above, block canvas below, and a live inspector down the right-hand side showing
+      tick, ops spent, body modules and every register while the program runs.
+    </p>
+
+    <div class="shots" id="shots" style="margin-top:32px"></div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- blocks -->
+<section id="blocks">
+  <div class="wrap">
+    <p class="eyebrow">Block library</p>
+    <h2>Thirty-seven blocks, and none of them are magic</h2>
+    <p class="lede dim" style="max-width:74ch;margin-top:14px">
+      Actions end a tick. Sensing blocks turn perception into a branch. Flow blocks count.
+      Source blocks have no exec ports at all and run only when a data wire pulls on them —
+      which is why a sensor sitting unread on the canvas is free.
+    </p>
+
+    <div class="cards" id="cat-preview" style="margin-top:32px"></div>
+
+    <div class="cta">
+      <a class="btn" href="wiki.html"><span class="btn__dot"></span>Open the full block wiki</a>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------ standings -->
+<section id="standings">
+  <div class="wrap">
+    <p class="eyebrow">Global standings</p>
+    <h2>Top players</h2>
+
+    <div class="board-wrap" style="margin-top:26px">
+      <div class="panel panel--bracket">
+        <div class="panel__head">
+          <span id="lb-title">Leaderboard</span>
+          <span id="lb-stamp" class="dim"></span>
+        </div>
+        <div class="panel__body" id="lb-body">
+          <div class="lb-empty">
+            <b>Coming soon<span class="blink">_</span></b>
+            <span>Loading standings…</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="amber">Where these numbers come from</h3>
+        <p class="dim" style="margin-top:10px;font-size:13px">
+          The game keeps a per-level score, a best tick count and a fewest-blocks record for
+          every puzzle you solve, plus a free-play best. Once Tail Recursion has a Steam app
+          id, those records go up to a Steam leaderboard and land here.
+        </p>
+        <p class="dim" style="font-size:13px">
+          A scheduled job pulls the leaderboard through Steam's Web API and commits the result
+          as a plain JSON file next to this page. The API key stays in the build; the browser
+          only ever reads the snapshot.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------------ mods -->
+<section id="mods">
+  <div class="wrap">
+    <p class="eyebrow">Mods</p>
+    <h2>One file, same sandbox, hot reloaded</h2>
+
+    <div class="two" style="margin-top:26px">
+      <div>
+        <p class="dim">
+          A mod is a folder with an <code>init.lua</code> in it. It loads after the built-ins,
+          registers blocks and items with the same calls the base game uses, and runs in the
+          same sandbox under the same budget. A broken mod is disabled and named while
+          everything else keeps running.
+        </p>
+        <p class="dim">
+          Both the block files and the active program hot-reload while the game is running, so
+          editing a block or rewiring a graph takes effect without a restart.
+        </p>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><span>mods/example_fear/init.lua</span></div>
+        <div class="panel__body" style="font-size:12.5px;line-height:1.7;color:var(--text-dim)">
+          <span class="green">register_block</span> {<br>
+          &nbsp;&nbsp;id = <span class="amber">"fear_tail"</span>,<br>
+          &nbsp;&nbsp;name = <span class="amber">"Tail Beside Me?"</span>,<br>
+          &nbsp;&nbsp;category = <span class="amber">"sensing"</span>,<br>
+          &nbsp;&nbsp;cost = 2,<br>
+          &nbsp;&nbsp;module = <span class="amber">"sensor"</span>,<br>
+          &nbsp;&nbsp;exec = { <span class="amber">"afraid"</span>, <span class="amber">"calm"</span> },<br>
+          &nbsp;&nbsp;execute = <span class="green">function</span>(ctx) … <span class="green">end</span>,<br>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------- community -->
+<section id="community">
+  <div class="wrap">
+    <p class="eyebrow">Community</p>
+    <h2>Made by DEV505, on his own</h2>
+    <p class="lede dim" style="max-width:74ch;margin-top:14px">
+      Devlogs, build breakdowns and the occasional look at what broke this week go up on
+      YouTube. The Discord and the Steam page are on their way.
+    </p>
+
+    <div class="links" id="links" style="margin-top:30px"></div>
+
+    <div class="panel" style="margin-top:30px">
+      <div class="panel__head"><span>Under the hood</span></div>
+      <div class="panel__body">
+        <dl class="rows rows--plain">
+          <div class="row">
+            <dt>Engine</dt><dd>C++ on SDL3's GPU API — Metal on macOS, Direct3D 12 on Windows,
+            behind one renderer interface.</dd>
+          </div>
+          <div class="row">
+            <dt>Scripting</dt><dd>Lua 5.4 in a sandbox treated as a security boundary, with an
+            instruction watchdog so one bad block can never hang the app.</dd>
+          </div>
+          <div class="row">
+            <dt>Assets</dt><dd>Almost none. The 5&times;7 font is code, the UI is quads, and
+            every sound effect is synthesized at startup from square and triangle waves.</dd>
+          </div>
+          <div class="row">
+            <dt>Testing</dt><dd>A headless self-test suite covering determinism, the action
+            model, collisions, the sandbox, save and restore — run on both platforms on every
+            push.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Tail Recursion &mdash; a game by DEV505.</span>
+    <span><a href="wiki.html">Block wiki</a> &nbsp;·&nbsp; <a href="https://www.youtube.com/@devisv505" rel="noopener">YouTube</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/pixel.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/demo.js"></script>
+<script src="assets/js/leaderboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+{
+  "note": "Generated from the game's own block registrations. Regenerate with tools/dump_blocks.lua — see README.md. Do not hand-edit for anything other than a typo you are also fixing in the Lua.",
+  "source": {
+    "game": "Tail Recursion",
+    "files": ["lua/blocks/core.lua", "lua/blocks/sensing.lua", "lua/economy.lua", "mods/example_fear/init.lua"],
+    "captured": "2026-07-28"
+  },
+  "budget": {
+    "baselineOps": 10,
+    "processorSegmentBonus": 5,
+    "note": "Ops per tick. Most blocks cost 1. A source node costs nothing at all when no data wire reads it."
+  },
+  "categories": [
+    { "id": "event",     "label": "Event",     "color": "amber",  "blurb": "Where a program begins." },
+    { "id": "action",    "label": "Action",    "color": "red",    "blurb": "Executing one of these ends the tick. At most one action resolves per tick." },
+    { "id": "sensing",   "label": "Sensing",   "color": "cyan",   "blurb": "Perception turned into control flow. Every one needs a Sensor Segment in the body." },
+    { "id": "condition", "label": "Condition", "color": "blue",   "blurb": "Two-way branches on a test or a wired value." },
+    { "id": "flow",      "label": "Flow",      "color": "violet", "blurb": "Counting loops. Plain repetition needs no block — a chain that ends restarts from Start." },
+    { "id": "memory",    "label": "Memory",    "color": "gold",   "blurb": "State that survives between ticks: a node's own count, or one of the shared registers." },
+    { "id": "source",    "label": "Source",    "color": "green",  "blurb": "Values with no exec ports. They run only when a data wire pulls on them." }
+  ],
+  "modules": [
+    { "id": "standard",  "name": "Standard",  "grants": "Length only.", "shipped": true },
+    { "id": "sensor",    "name": "Sensor",    "grants": "Every environmental sense: look at range 3, smell at radius 5, touch in all three directions.", "shipped": true },
+    { "id": "memory",    "name": "Memory",    "grants": "Register slots — 2 per segment.", "shipped": true },
+    { "id": "processor", "name": "Processor", "grants": "+5 ops per tick.", "shipped": true },
+    { "id": "storage",   "name": "Storage",   "grants": "Item capacity and allowed types.", "shipped": false },
+    { "id": "battery",   "name": "Battery",   "grants": "Energy for advanced actions.", "shipped": false },
+    { "id": "drill",     "name": "Drill",     "grants": "Destroy rock, collect ore.", "shipped": false },
+    { "id": "weapon",    "name": "Weapon",    "grants": "Attack.", "shipped": false },
+    { "id": "signal",    "name": "Signal",    "grants": "Send and read signals.", "shipped": false }
+  ],
+  "blocks": [
+    {
+      "id": "start", "name": "Start", "category": "event", "cost": 0, "module": null, "origin": "core",
+      "desc": "Where the program begins each run, and where it returns to when the chain ends. Always present, and cannot be deleted.",
+      "execIn": false, "exec": [{ "id": "out" }], "params": [], "inputs": [], "outputs": [],
+      "note": "The entry point is graph structure, not this block's behaviour — which is why it does nothing and costs nothing. Nothing may flow into it."
+    },
+    {
+      "id": "move_forward", "name": "Move Forward", "category": "action", "cost": 1, "module": null, "origin": "core",
+      "desc": "Advances one cell in the direction the head is facing, then ends the tick. Execution resumes at the next block on the following tick.",
+      "execIn": true, "exec": [{ "id": "out" }], "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "turn_left", "name": "Turn Left", "category": "action", "cost": 1, "module": null, "origin": "core",
+      "desc": "Rotates 90 degrees counter-clockwise without moving, then ends the tick. Turning and moving are separate actions, so a full reversal takes two ticks.",
+      "execIn": true, "exec": [{ "id": "out" }], "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "turn_right", "name": "Turn Right", "category": "action", "cost": 1, "module": null, "origin": "core",
+      "desc": "Rotates 90 degrees clockwise without moving, then ends the tick.",
+      "execIn": true, "exec": [{ "id": "out" }], "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "wait", "name": "Wait", "category": "action", "cost": 1, "module": null, "origin": "core",
+      "desc": "Deliberately spends the tick doing nothing. Waiting more than one tick parks the thread, so the extra ticks cost no ops.",
+      "execIn": true, "exec": [{ "id": "out" }],
+      "params": [{ "id": "ticks", "type": "int", "min": 1, "max": 99, "default": 1 }],
+      "inputs": [], "outputs": []
+    },
+    {
+      "id": "stop", "name": "Stop", "category": "action", "cost": 0, "module": null, "origin": "core",
+      "desc": "Halts the program. The snake stands still for the rest of the level and execution does not resume.",
+      "execIn": true, "exec": [], "terminal": true, "params": [], "inputs": [], "outputs": [],
+      "note": "The only block that ends a program. Everything else eventually returns to Start."
+    },
+
+    {
+      "id": "touch_ahead", "name": "Blocked Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Reads the cell directly in front of the head and branches on whether entering it would fail. Walls, closed doors and the snake's own body count as blocked; apples do not.",
+      "execIn": true,
+      "exec": [
+        { "id": "blocked", "desc": "a wall or your own body is one cell ahead" },
+        { "id": "clear", "desc": "safe to carry on, including onto an apple" }
+      ],
+      "params": [], "inputs": [], "outputs": [],
+      "note": "An apple is emphatically not an obstacle. Treating \"not empty\" as \"blocked\" gives a snake that turns away the instant food is one cell ahead, orbits it forever and starves."
+    },
+    {
+      "id": "touch_side", "name": "Blocked To The Side?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Reads the cell immediately to one side of the head and branches on whether entering it would be fatal. Walls and the snake's own body count as blocked; apples do not.",
+      "execIn": true,
+      "exec": [{ "id": "blocked" }, { "id": "clear" }],
+      "params": [{ "id": "side", "type": "direction", "default": "RIGHT", "options": ["LEFT", "RIGHT"] }],
+      "inputs": [], "outputs": []
+    },
+    {
+      "id": "scan", "name": "Scan", "category": "sensing", "cost": 2, "module": "sensor", "origin": "sensing",
+      "desc": "Casts a ray from the head in the given direction and stops at the first cell that is not empty, reporting what it found and how far away it was. Reaches no further than the Sensor Segment's range.",
+      "execIn": true,
+      "exec": [
+        { "id": "hit", "desc": "something was found within range" },
+        { "id": "clear", "desc": "nothing at all along that line" }
+      ],
+      "params": [{ "id": "dist", "type": "int", "min": 1, "max": 3, "default": 3, "desc": "how many cells to look along" }],
+      "inputs": [{ "id": "dir", "type": "direction", "default": "FORWARD", "desc": "which way to look, relative to the head" }],
+      "outputs": [
+        { "id": "kind", "type": "cell_kind", "desc": "what was found: wall, body, apple, door, switch, exit or empty" },
+        { "id": "dist", "type": "int", "desc": "how many cells away it was" }
+      ]
+    },
+    {
+      "id": "smell_turn", "name": "Turn Toward Food", "category": "sensing", "cost": 2, "module": "sensor", "origin": "sensing",
+      "desc": "Finds the nearest item within smell radius and branches on which way the head would have to turn to shorten the distance to it. Items beyond the radius are not detected at all.",
+      "execIn": true,
+      "exec": [
+        { "id": "left", "desc": "turning left closes the distance" },
+        { "id": "right", "desc": "turning right closes the distance" },
+        { "id": "ahead", "desc": "already pointing at it - carry on" },
+        { "id": "none", "desc": "no food within smell radius" }
+      ],
+      "params": [], "inputs": [], "outputs": [],
+      "note": "Food directly behind takes the right branch rather than stalling — clockwise by convention, so the choice stays deterministic."
+    },
+    {
+      "id": "touch_kind", "name": "What Is Beside Me?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Reports what occupies one of the three cells adjacent to the head, as a value rather than a yes or no. Works in every direction at baseline, unlike Scan.",
+      "execIn": true, "exec": [{ "id": "out" }],
+      "params": [{ "id": "side", "type": "direction", "default": "RIGHT", "options": ["FORWARD", "LEFT", "RIGHT"] }],
+      "inputs": [],
+      "outputs": [{ "id": "kind", "type": "cell_kind" }],
+      "note": "Wire its kind output into Is It...? to branch on anything the three named tests do not cover."
+    },
+    {
+      "id": "wall_ahead", "name": "Wall Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead is a wall. The edge of the map counts as a wall; a closed door does not - that is a door.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is wall" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "food_ahead", "name": "Food Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead holds food.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is apple" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "body_ahead", "name": "Body Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead is part of your own body.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is body" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "exit_ahead", "name": "Exit Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead is the level exit.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is exit" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "door_ahead", "name": "Door Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead is a closed door. An open door reads as empty floor - it is not in the way.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is door" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "switch_ahead", "name": "Switch Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead is a switch. Walk onto it to press it; what it drives is up to the level.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the cell directly ahead is switch" }, { "id": "no", "desc": "it is something else" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+    {
+      "id": "object_ahead", "name": "Object Ahead?", "category": "sensing", "cost": 1, "module": "sensor", "origin": "sensing",
+      "desc": "Branches on whether the cell directly ahead holds anything at all, rather than testing for one particular thing.",
+      "execIn": true, "exec": [{ "id": "yes" }, { "id": "no" }],
+      "params": [], "inputs": [], "outputs": []
+    },
+
+    {
+      "id": "compare", "name": "Compare", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Compares its two numeric inputs with the chosen operator and takes the yes or no branch accordingly.",
+      "execIn": true, "exec": [{ "id": "yes" }, { "id": "no" }],
+      "params": [{ "id": "op", "type": "string", "default": "<", "options": ["<", ">", "<=", ">=", "==", "~="] }],
+      "inputs": [{ "id": "a", "type": "float", "default": "0" }, { "id": "b", "type": "float", "default": "0" }],
+      "outputs": []
+    },
+    {
+      "id": "match", "name": "Is It...?", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Tests whether the value on its input equals the one chosen in its parameter, and takes the yes or no branch accordingly. The comparison is exact and by text.",
+      "execIn": true,
+      "exec": [{ "id": "yes", "desc": "the value matched" }, { "id": "no", "desc": "it did not" }],
+      "params": [{ "id": "expect", "type": "string", "default": "wall", "options": ["wall", "body", "apple", "empty", "exit", "door", "switch"], "desc": "the value to test against" }],
+      "inputs": [{ "id": "value", "type": "any", "desc": "wire something here - usually Scan's kind output" }],
+      "outputs": []
+    },
+    {
+      "id": "if_else", "name": "If / Else", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Branches on a wired true/false value. Use it when the test comes from a data wire rather than from a sensor's own branches.",
+      "execIn": true, "exec": [{ "id": "yes" }, { "id": "no" }],
+      "params": [],
+      "inputs": [{ "id": "condition", "type": "bool", "default": "false" }],
+      "outputs": []
+    },
+    {
+      "id": "every", "name": "Every N Ticks", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Branches on whether the current tick number divides exactly by the chosen interval, so the yes branch is taken once every N ticks.",
+      "execIn": true, "exec": [{ "id": "yes" }, { "id": "no" }],
+      "params": [{ "id": "n", "type": "int", "min": 2, "max": 999, "default": 4 }],
+      "inputs": [], "outputs": []
+    },
+    {
+      "id": "chance", "name": "Chance", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Takes the yes branch with the chosen probability, drawing from the seeded generator so the outcome replays identically.",
+      "execIn": true, "exec": [{ "id": "yes" }, { "id": "no" }],
+      "params": [{ "id": "percent", "type": "int", "min": 1, "max": 99, "default": 50 }],
+      "inputs": [], "outputs": []
+    },
+    {
+      "id": "and_op", "name": "And", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "True when both inputs are true.",
+      "execIn": false, "exec": [], "params": [],
+      "inputs": [{ "id": "a", "type": "bool", "default": "false" }, { "id": "b", "type": "bool", "default": "false" }],
+      "outputs": [{ "id": "value", "type": "bool" }]
+    },
+    {
+      "id": "or_op", "name": "Or", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "True when either input is true.",
+      "execIn": false, "exec": [], "params": [],
+      "inputs": [{ "id": "a", "type": "bool", "default": "false" }, { "id": "b", "type": "bool", "default": "false" }],
+      "outputs": [{ "id": "value", "type": "bool" }]
+    },
+    {
+      "id": "not_op", "name": "Not", "category": "condition", "cost": 1, "module": null, "origin": "core",
+      "desc": "Inverts its input.",
+      "execIn": false, "exec": [], "params": [],
+      "inputs": [{ "id": "a", "type": "bool", "default": "false" }],
+      "outputs": [{ "id": "value", "type": "bool" }]
+    },
+
+    {
+      "id": "repeat_n", "name": "Repeat N Times", "category": "flow", "cost": 1, "module": null, "origin": "core",
+      "desc": "Takes the loop branch a fixed number of times, then the done branch once and resets. Wire the end of the loop body back here - a body that just ends restarts the whole program from Start instead.",
+      "execIn": true,
+      "exec": [
+        { "id": "loop", "desc": "still counting - run the body" },
+        { "id": "done", "desc": "the count is finished" }
+      ],
+      "params": [{ "id": "times", "type": "int", "min": 1, "max": 999, "default": 4 }],
+      "inputs": [], "outputs": [],
+      "note": "The count lives in this node's own private state, so two Repeats never interfere. It resets on the way out, which is why a loop reached a second time counts again from zero."
+    },
+    {
+      "id": "repeat_until", "name": "Repeat Until", "category": "flow", "cost": 1, "module": null, "origin": "core",
+      "desc": "Takes the loop branch while its condition input is false, and the done branch once it becomes true. Wire the end of the loop body back here - a body that just ends restarts the whole program from Start instead.",
+      "execIn": true,
+      "exec": [
+        { "id": "loop", "desc": "the condition is still false" },
+        { "id": "done", "desc": "the condition became true" }
+      ],
+      "params": [],
+      "inputs": [{ "id": "condition", "type": "bool", "default": "false" }],
+      "outputs": []
+    },
+
+    {
+      "id": "counter", "name": "Counter", "category": "memory", "cost": 1, "module": null, "origin": "core",
+      "desc": "Counts how many times it has run and reports the running total. The count belongs to this node alone and survives between ticks.",
+      "execIn": true, "exec": [{ "id": "out" }], "params": [], "inputs": [],
+      "outputs": [{ "id": "count", "type": "int" }]
+    },
+    {
+      "id": "store", "name": "Store Register", "category": "memory", "cost": 1, "module": null, "origin": "core",
+      "desc": "Writes its input into one of the numbered registers, where it stays until overwritten. Registers persist across ticks and are shared by the whole graph.",
+      "execIn": true, "exec": [{ "id": "out" }],
+      "params": [{ "id": "slot", "type": "int", "min": 1, "max": 8, "default": 1 }],
+      "inputs": [{ "id": "value", "type": "float", "default": "0" }],
+      "outputs": []
+    },
+    {
+      "id": "recall", "name": "Read Register", "category": "memory", "cost": 1, "module": null, "origin": "core",
+      "desc": "Reads the current contents of one of the numbered registers. Reads zero if nothing has been written there.",
+      "execIn": false, "exec": [],
+      "params": [{ "id": "slot", "type": "int", "min": 1, "max": 8, "default": 1 }],
+      "inputs": [],
+      "outputs": [{ "id": "value", "type": "float" }]
+    },
+
+    {
+      "id": "const_int", "name": "Number", "category": "source", "cost": 0, "module": null, "origin": "core",
+      "desc": "Emits a fixed whole number, unchanged every tick. Costs nothing, and nothing at all when no wire reads it.",
+      "execIn": false, "exec": [],
+      "params": [{ "id": "value", "type": "int", "min": -999, "max": 999, "default": 0 }],
+      "inputs": [],
+      "outputs": [{ "id": "value", "type": "int" }]
+    },
+    {
+      "id": "const_dir", "name": "Direction", "category": "source", "cost": 0, "module": null, "origin": "core",
+      "desc": "Emits a fixed direction, relative to the head rather than to the board. Costs nothing, and nothing at all when no wire reads it.",
+      "execIn": false, "exec": [],
+      "params": [{ "id": "value", "type": "direction", "default": "FORWARD" }],
+      "inputs": [],
+      "outputs": [{ "id": "value", "type": "direction" }]
+    },
+    {
+      "id": "body_length", "name": "Own Length", "category": "source", "cost": 1, "module": null, "origin": "core",
+      "desc": "Reports how many cells long the snake currently is, counting the head.",
+      "execIn": false, "exec": [], "params": [], "inputs": [],
+      "outputs": [{ "id": "value", "type": "int" }],
+      "note": "Self-knowledge needs no hardware — length, tick and random work with no Sensor Segment."
+    },
+    {
+      "id": "clock", "name": "Tick", "category": "source", "cost": 1, "module": null, "origin": "core",
+      "desc": "Reports the number of ticks elapsed since the run began.",
+      "execIn": false, "exec": [], "params": [], "inputs": [],
+      "outputs": [{ "id": "value", "type": "int" }]
+    },
+    {
+      "id": "dice", "name": "Random Number", "category": "source", "cost": 1, "module": null, "origin": "core",
+      "desc": "Draws a whole number from zero up to one below the chosen bound, using the seeded generator so a replay produces the same sequence.",
+      "execIn": false, "exec": [],
+      "params": [{ "id": "sides", "type": "int", "min": 2, "max": 100, "default": 6 }],
+      "inputs": [],
+      "outputs": [{ "id": "value", "type": "int" }]
+    },
+    {
+      "id": "smell_dir", "name": "Food Direction", "category": "source", "cost": 2, "module": "sensor", "origin": "sensing",
+      "desc": "Reports the direction of the nearest item within smell radius as a value, without branching. Publishes nothing useful when no item is in range.",
+      "execIn": false, "exec": [], "params": [], "inputs": [],
+      "outputs": [
+        { "id": "dir", "type": "direction" },
+        { "id": "distance", "type": "int" },
+        { "id": "found", "type": "bool" }
+      ]
+    },
+
+    {
+      "id": "fear_tail", "name": "Tail Beside Me?", "category": "sensing", "cost": 2, "module": "sensor", "origin": "mod",
+      "mod": "example_fear",
+      "desc": "Reads the two cells either side of the head and branches on whether the snake's own body is against one of them, reporting which side it was on.",
+      "execIn": true,
+      "exec": [
+        { "id": "afraid", "desc": "own body is beside the head" },
+        { "id": "calm", "desc": "both sides are clear of it" }
+      ],
+      "params": [], "inputs": [],
+      "outputs": [{ "id": "side", "type": "direction", "desc": "the side the body was found on" }]
+    },
+    {
+      "id": "fear_level", "name": "Fear Level", "category": "source", "cost": 1, "module": null, "origin": "mod",
+      "mod": "example_fear",
+      "desc": "Reports a number that rises with the snake's length, as a rough measure of how much of the board it now occupies.",
+      "execIn": false, "exec": [], "params": [], "inputs": [],
+      "outputs": [{ "id": "value", "type": "int", "desc": "grows as the snake does" }]
+    }
+  ],
+  "items": [
+    { "id": "apple", "name": "Apple", "weight": 88, "score": 1, "grows": true, "origin": "core",
+      "desc": "The common one. Lengthens the snake, which is capability and liability at once." },
+    { "id": "golden_apple", "name": "Golden Apple", "weight": 8, "score": 10, "grows": true, "origin": "core",
+      "desc": "Worth a burst, and worth steering across the board for." },
+    { "id": "chip", "name": "Chip", "weight": 4, "score": 6, "grows": false, "origin": "core",
+      "desc": "A pickup rather than a meal: pays well and leaves you short, which makes it the one item that is safe to grab when you are already dangerously long." },
+    { "id": "nerve_tonic", "name": "Nerve Tonic", "weight": 3, "score": 8, "grows": false, "origin": "mod", "mod": "example_fear",
+      "desc": "Added by the worked example mod, to show that an item registration is the same one line the base game uses." }
+  ]
+}

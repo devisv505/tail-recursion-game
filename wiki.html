@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Block wiki — Tail Recursion</title>
+<meta name="description" content="Every default block in Tail Recursion: cost in ops, hardware it needs, its parameters, its data ports and its exec branches.">
+<meta name="theme-color" content="#070a0e">
+<meta name="author" content="DEV505">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Tail Recursion">
+<meta property="og:locale" content="en">
+<meta property="og:title" content="Block wiki — Tail Recursion">
+<meta property="og:description" content="Every default block: cost in ops, the hardware it needs, its parameters, its data ports and its exec branches.">
+<meta name="twitter:card" content="summary">
+
+<!-- seo:start --><!-- seo:end -->
+
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Tail Recursion — home">
+      <svg id="brandmark" role="img" aria-label="Tail Recursion"></svg>
+      <span class="tag">DEV505</span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav">MENU</button>
+    <nav class="nav" id="nav">
+      <a href="index.html#game">The Game</a>
+      <a href="index.html#run">How It Runs</a>
+      <a href="index.html#screens">Screens</a>
+      <a href="wiki.html" aria-current="page">Blocks</a>
+      <a href="authoring.html">Authoring</a>
+      <a href="index.html#standings">Standings</a>
+      <a href="index.html#community">Community</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section style="padding-top:48px">
+  <div class="wrap">
+    <p class="eyebrow">Block wiki</p>
+    <h1>Every default block</h1>
+    <p class="lede dim" style="max-width:78ch;margin-top:14px">
+      This is the shipped library, taken from the game's own registrations. Costs are in
+      <span class="hl">ops</span>, and the baseline processor runs ten of them per tick — so
+      the number in the corner of a block is the fraction of one thought it takes up.
+    </p>
+
+    <div class="rows" style="margin-top:26px">
+      <div class="row">
+        <dt>Exec ports</dt>
+        <dd>The green ports. Control flows along them, one branch at a time. A block with no
+          exec ports is a source: it never appears in the control flow and runs only when a
+          data wire reads it.</dd>
+      </div>
+      <div class="row">
+        <dt>Data ports</dt>
+        <dd>Inputs and outputs carrying values. Pulling an input executes whatever is wired to
+          it, which is why reading a sensor costs its ops and leaving one unread costs
+          nothing.</dd>
+      </div>
+      <div class="row">
+        <dt>Requires Sensor</dt>
+        <dd>Environmental senses are hardware. A program using one is refused before it runs
+          if the level's snake has no Sensor Segment, naming the node and the segment — and
+          the sensor refuses again at run time, so a segment lost mid-run errors on the block
+          instead of quietly answering stale.</dd>
+      </div>
+      <div class="row">
+        <dt>Ends the tick</dt>
+        <dd>The five action blocks. Reaching one resolves the tick's single action and
+          suspends the thread there; the next tick resumes at the block after it.</dd>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;border-top:0">
+  <div class="wrap">
+    <div class="wiki">
+      <aside class="wiki__side">
+        <div class="panel panel--bracket">
+          <div class="panel__head"><span>Filter</span><span id="count" class="dim"></span></div>
+          <div class="panel__body">
+            <label for="filter" class="sr-only" style="position:absolute;left:-9999px">Search blocks</label>
+            <input class="filter" id="filter" type="search" placeholder="search blocks…" autocomplete="off">
+            <ul class="catlist" id="cats"></ul>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel__head"><span>Budget</span></div>
+          <div class="panel__body" style="font-size:12.5px;color:var(--text-dim)">
+            <p style="margin-bottom:8px"><span class="green">10</span> ops per tick at baseline.</p>
+            <p style="margin-bottom:8px"><span class="green">+5</span> for every Processor Segment.</p>
+            <p style="margin:0">Running out is not an error — execution suspends at the block it
+              could not afford and resumes there next tick.</p>
+          </div>
+        </div>
+      </aside>
+
+      <div>
+        <div class="blocklist" id="list"></div>
+        <div class="no-hits" id="nohits" hidden>Nothing matches that.</div>
+
+        <div class="panel" style="margin-top:34px">
+          <div class="panel__head"><span>Items</span></div>
+          <div class="panel__body">
+            <div class="rows rows--plain" id="items"></div>
+            <p class="dim" style="font-size:12.5px;margin-top:14px">
+              Weight is a share of the spawn roll; score is the base value before the combo
+              multiplier. Levels place their items by hand — free play rolls for them.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Tail Recursion &mdash; a game by DEV505.</span>
+    <span><a href="index.html">Back to the game</a> &nbsp;·&nbsp; <a href="https://www.youtube.com/@devisv505" rel="noopener">YouTube</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/pixel.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/wiki.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "status": "pending",
+  "appId": null,
+  "leaderboard": {
+    "id": null,
+    "name": "Global standings"
+  },
+  "detailLabel": "Detail",
+  "updated": null,
+  "entries": [],
+  "note": "Tail Recursion does not have a Steam app id yet, so there is no leaderboard to read. This file is rewritten by .github/workflows/leaderboard.yml once the app exists and the game starts uploading scores."
+}

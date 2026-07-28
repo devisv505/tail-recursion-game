@@ -1,0 +1,6 @@
+# Tail Recursion — https://www.youtube.com/@devisv505
+User-agent: *
+Allow: /
+
+# data/ holds the block library and the standings snapshot. Both are fetched
+# by the pages themselves, so a crawler that renders needs them.

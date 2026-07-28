@@ -1,0 +1,14 @@
+# Intermediate output from tools/dump_blocks.lua — data/blocks.json is what
+# ships, and it is produced by merging this into it.
+data/blocks.generated.json
+
+# Written by tools/build-seo.mjs at deploy time, from the URL GitHub Pages
+# actually published to. Committing one would hardcode a guess.
+sitemap.xml
+
+# Local preview server config, machine-specific paths.
+.claude/launch.json
+
+.DS_Store
+Thumbs.db
+node_modules/

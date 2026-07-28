@@ -1,0 +1,58 @@
+name: Refresh standings
+
+# Pulls the Steam leaderboard and commits data/leaderboard.json.
+#
+# The page cannot do this itself: Steam's Web API sends no CORS headers, and
+# the leaderboard endpoints need a publisher key that must never reach a
+# browser. So the key lives here as a secret and the site reads the snapshot.
+#
+# Setup, once the game has a real app id:
+#   Settings -> Secrets and variables -> Actions
+#     secret   STEAM_API_KEY           publisher Web API key
+#     variable STEAM_APP_ID            the app id
+#     variable STEAM_LEADERBOARD_NAME  optional; defaults to the first board
+#
+# Until then the job runs, finds no configuration, and writes the same
+# "pending" file the site already ships — which is why it is safe to enable now.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'      # four times a day, off the hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: leaderboard
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch leaderboard
+        env:
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_APP_ID: ${{ vars.STEAM_APP_ID }}
+          STEAM_LEADERBOARD_NAME: ${{ vars.STEAM_LEADERBOARD_NAME }}
+          STEAM_TOP_N: '25'
+        run: node tools/fetch-leaderboard.mjs
+
+      - name: Commit if it changed
+        run: |
+          if git diff --quiet -- data/leaderboard.json; then
+            echo "standings unchanged"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/leaderboard.json
+          git commit -m "standings: refresh from Steam"
+          git push

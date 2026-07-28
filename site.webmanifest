@@ -1,0 +1,16 @@
+{
+  "name": "Tail Recursion",
+  "short_name": "Tail Recursion",
+  "description": "A snake game where you never steer. You wire the program; the snake runs it.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070a0e",
+  "theme_color": "#070a0e",
+  "lang": "en",
+  "icons": [
+    { "src": "assets/icon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "assets/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

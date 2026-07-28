@@ -1,0 +1,9 @@
+# Keep LF in the repository regardless of the machine that committed.
+#
+# This is not cosmetic: the Pages and leaderboard workflows contain multi-line
+# `run:` blocks that execute as bash on an Ubuntu runner, and a CRLF in one of
+# those fails with `$'\r': command not found`.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
