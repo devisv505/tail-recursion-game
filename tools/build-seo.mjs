@@ -37,7 +37,18 @@ function detectBase() {
   return '';
 }
 
-const BASE = detectBase().replace(/\/+$/, '');
+/* Force https on anything that is not a local address.
+ *
+ * actions/configure-pages reports http:// for a custom domain until "Enforce
+ * HTTPS" is switched on, which cannot happen until the certificate is issued.
+ * Taking that at face value publishes a canonical tag naming the insecure URL
+ * and hands it to every crawler that reads the page in the meantime. Pages
+ * serves https for a custom domain once the certificate lands, so https is the
+ * URL that will be true — and a canonical is a claim about the future, not a
+ * report on the current listener. */
+const BASE = detectBase()
+  .replace(/\/+$/, '')
+  .replace(/^http:\/\/(?!localhost\b|127\.|\[?::1)/i, 'https://');
 
 const STUDIO = 'DEV505';
 const YOUTUBE = 'https://www.youtube.com/@devisv505';
