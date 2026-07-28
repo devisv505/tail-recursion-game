@@ -10,6 +10,7 @@ the page has nothing to fetch but itself.
 ```
 index.html              the game: pitch, live demo, screens, standings, links
 wiki.html               every default block, filterable
+authoring.html          adding blocks, writing levels, the full Lua API
 404.html                served by Pages for anything that does not exist
 data/blocks.json        the block library, taken from the game's registrations
 data/leaderboard.json   the standings snapshot, written by CI
@@ -49,8 +50,8 @@ Edit `links` in [`assets/js/config.js`](assets/js/config.js):
 ```js
 links: {
   youtube: 'https://www.youtube.com/@devisv505',
-  discord: null,   // becomes a live button the moment it is a URL
-  steam:   null,
+  discord: 'https://discord.gg/q9T9UcjAZv',
+  steam:   null,   // becomes a live button the moment it is a URL
 }
 ```
 
