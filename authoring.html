@@ -60,8 +60,8 @@
       Mods use the same two registration calls as the base game, run in the same sandbox, and
       get the same budget. If you can read <code>lua/blocks/core.lua</code>, you can already
       write the equivalent block in a mod. Levels are a separate, simpler thing — a plain text
-      file with a map drawn in it — and they are covered in
-      <a href="#levels">part two</a>.
+      file with the map drawn in it, dropped in <code>levels/custom/</code> — and they are
+      covered in <a href="#levels">part two</a>.
     </p>
 
     <div class="cta">
@@ -383,39 +383,84 @@ register_block {
     <p class="eyebrow">Part two</p>
     <h2>Levels</h2>
     <p class="lede dim" style="max-width:78ch;margin-top:14px">
-      A level is a plain text file in <code>levels/</code>, with the map drawn in it as
-      characters. Lines starting with <code>#</code> are comments. Here is a complete one —
-      the fifth puzzle, whose solution is the three-block program on the front page.
+      A level is a plain text file with the map drawn in it as characters. Yours go in
+      <code>levels/custom/</code>, and they appear in the game under
+      <span class="hl">CUSTOM LEVELS</span> on the title menu — a numbered grid exactly like
+      the puzzles, built from the directory and sorted by filename. Name them
+      <code>01_…</code>, <code>02_…</code> if you want a particular order.
     </p>
 
-    <p class="code-label"><span>levels/puzzles/04_perimeter.level</span><span>complete file</span></p>
-<pre class="code" data-lang="level"># Puzzle 4 — the first sensor. A ring around a block, solved by two blocks
-# and a wall sense: if the wall is ahead turn right, otherwise walk.
-id p04_perimeter
-name Perimeter
-desc Keep one hand on the wall and walk.
-size 14 10
+    <div class="warn">
+      <b>The folder is read once, at launch</b>
+      Blocks hot-reload while the game runs; levels do not. Restart after adding or renaming
+      a file. Editing the <em>program</em> you are solving it with still reloads live, so the
+      iteration loop inside a level is unaffected.
+    </div>
+
+    <div class="step"><span class="step__n">01</span><h3>Drop a file in</h3></div>
+
+<pre class="code" data-lang="level">levels/
+  custom/
+    01_my_test.level
+    02_another.level</pre>
+
+    <p class="dim">
+      Only files ending <code>.level</code> are picked up, so a README or a scratch file can
+      sit beside them harmlessly. The directory being absent or empty is the normal state —
+      the menu row reads <code>CUSTOM LEVELS - NONE FOUND</code> rather than the load
+      complaining. A broken level is named in the log and skipped, exactly like a broken mod:
+      one bad file never costs you the rest of them.
+    </p>
+    <p class="dim">
+      Shipped levels carry a source fingerprint and are reported as corrupted when edited.
+      Custom levels do not: like everything under <code>mods/</code>, they are author content
+      and stay freely editable.
+    </p>
+
+    <div class="step"><span class="step__n">02</span><h3>Two rules that are not the format</h3></div>
+    <p class="dim">
+      Custom levels record their best ticks and fewest blocks like any other, but they sit
+      <b class="hl">outside the levels score</b> — that total is only comparable because it
+      runs over a fixed set of 100 shipped puzzles, and a two-block custom level would
+      otherwise be free points on it.
+    </p>
+    <p class="dim">
+      And nothing here is <b class="hl">locked</b>. These are your levels; having to beat your
+      own level 1 to reach your level 2 would be a rule invented for no reason.
+    </p>
+
+    <div class="step"><span class="step__n">03</span><h3>A complete file</h3></div>
+    <p class="dim">
+      The fastest start is to copy anything out of <code>levels/puzzles/</code> and edit it.
+      This one ships in <code>levels/custom/</code> as a worked example — six cells of
+      corridor, solvable with a single block, because the chain re-runs every tick on its own.
+    </p>
+
+    <p class="code-label"><span>levels/custom/01_my_test.level</span><span>complete file</span></p>
+<pre class="code" data-lang="level"># Six cells of corridor, one block wired once: the chain re-runs every
+# tick, so Move Forward alone walks it.
+id custom_test_a
+name My Test Level
+desc Six cells forward. One block, wired once.
+size 12 5
 heading EAST
 length 3
-modules sensor
-seed 104
+seed 100
 objective reach_exit
-bonus within_ticks 26
-tick_limit 100
+bonus within_ticks 10
+tick_limit 40
 stall_limit 20
-blocks start move_forward turn_left turn_right repeat_n wall_ahead if_else
-hint Wall Ahead? yes: Turn Right. no: Move Forward.
-hint That is the whole program.
-row ##############
-row #..S.........#
-row #.##########.#
-row #.##########.#
-row #.##########.#
-row #.##########.#
-row #.##########.#
-row #.##########.#
-row #.........E..#
-row ##############</pre>
+blocks start move_forward
+hint The chain re-runs every tick on its own.
+hint Start wired to Move Forward is the whole program.
+row ############
+row #..........#
+row #..S.....E.#
+row #..........#
+row ############</pre>
+
+    <p class="dim">Lines starting with <code>#</code> are comments. A byte-order mark on the
+      first line is stripped, so a file saved by an editor that adds one still loads.</p>
 
     <h3 class="amber" style="margin-top:38px">Every key</h3>
 
@@ -505,10 +550,48 @@ entity plate switch 3 7  mode=once links=gate</pre>
       </table>
     </div>
 
+    <h3 class="amber" style="margin-top:34px">What the loader rejects</h3>
+    <p class="dim">Every one of these fails the load with a message naming what is wrong, so
+      you find it rather than the player does.</p>
+
+    <div class="api-wrap">
+      <table class="api">
+        <thead><tr><th>Rejected</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td>A row narrower or wider than <code>size</code></td>
+            <td>Padding a short row would quietly delete the right-hand wall, which is far
+              harder to notice than a refusal to load.</td></tr>
+          <tr><td>No <code>S</code> on the map</td>
+            <td>There is nowhere to put the snake.</td></tr>
+          <tr><td>Too little room behind <code>S</code> for <code>length</code></td>
+            <td>The body would spawn inside the wall.</td></tr>
+          <tr><td>More <code>modules</code> than <code>length - 1</code></td>
+            <td>Modules sit in the segments behind the head; the head carries none.</td></tr>
+          <tr><td>A switch linking a door id that does not exist</td>
+            <td>A switch that drives nothing is almost always a typo.</td></tr>
+          <tr><td>An entity on a wall, the exit, food, or the snake's start</td>
+            <td>Two things in one cell has no defined meaning.</td></tr>
+          <tr><td>A <code>blocks</code> entry that is not a real block id</td>
+            <td>Catches a renamed block and a misspelling in the same check.</td></tr>
+          <tr><td>An unknown key, or an unknown map character</td>
+            <td>Named in the error, with the character quoted.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="warn">
+      <b>Two things the loader cannot check</b>
+      That the level is <em>solvable</em>, and that a <code>within_ticks</code> bonus is
+      actually reachable. The shipped puzzles are proven solvable by a route search in
+      <code>--selftest</code>; that check deliberately does not run over
+      <code>levels/custom/</code>, because it is your folder and a work-in-progress level
+      should not fail the game's own tests.
+    </div>
+
     <h3 class="amber" style="margin-top:34px">Testing it</h3>
-<pre class="code" data-lang="graph">./build/snake_v2 --level levels/my_level.level</pre>
-    <p class="dim">That skips the menu and opens your level directly, paused at tick zero.
-      Press space to run it.</p>
+<pre class="code" data-lang="graph">./build/snake_v2 --level levels/custom/01_my_test.level</pre>
+    <p class="dim">That skips the menu and opens your level directly, paused at tick zero —
+      quicker than restarting into the grid each time. Press space to run it.</p>
   </div>
 </section>
 
