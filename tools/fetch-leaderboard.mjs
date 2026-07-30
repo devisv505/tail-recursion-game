@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Pull a Steam leaderboard into data/leaderboard.json.
+ * Pull this app's Steam leaderboards into data/leaderboard.json.
  *
  * This runs in CI, never in a browser, and that is not a style choice:
  *
@@ -14,10 +14,11 @@
  * page reads the snapshot. The cost is staleness bounded by the cron interval.
  *
  * Environment:
- *   STEAM_API_KEY            publisher Web API key            (required)
- *   STEAM_APP_ID             the game's app id                (required)
- *   STEAM_LEADERBOARD_NAME   which board; default: the first  (optional)
- *   STEAM_TOP_N              how many rows; default 25        (optional)
+ *   STEAM_API_KEY            publisher Web API key                  (required)
+ *   STEAM_APP_ID             the game's app id                      (required)
+ *   STEAM_LEADERBOARD_NAMES  comma-separated; default: every board  (optional)
+ *   STEAM_LEADERBOARD_NAME   deprecated alias for a single board    (optional)
+ *   STEAM_TOP_N              rows per board; default 25             (optional)
  *
  * With either required variable missing the script writes a "pending" file and
  * exits 0 — an unconfigured secret is the normal state before launch, not a
@@ -33,18 +34,47 @@ const OUT = join(ROOT, 'data', 'leaderboard.json');
 
 const KEY = process.env.STEAM_API_KEY;
 const APP = process.env.STEAM_APP_ID;
-const WANT = process.env.STEAM_LEADERBOARD_NAME || '';
 const TOP = Number(process.env.STEAM_TOP_N || 25);
+
+/** Which boards to publish, in the order the page should show them. Empty
+ *  means "every board the app has", which is the sane default for one game. */
+const WANT = (process.env.STEAM_LEADERBOARD_NAMES || process.env.STEAM_LEADERBOARD_NAME || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 const PARTNER = 'https://partner.steam-api.com';
 const PUBLIC = 'https://api.steampowered.com';
 
+/**
+ * Short tab labels for the boards this game ships. Steamworks' own "community
+ * name" wins when it is set; this is only here because an API name like
+ * FREE_PLAY_BEST is a poor thing to print above a table, and "Free play best"
+ * is still longer than a tab wants to be.
+ */
+const LABELS = {
+  FREE_PLAY_BEST: 'Free play',
+  PUZZLE_SCORE: 'Puzzles',
+};
+
+const redact = (s) => (KEY ? String(s).split(KEY).join('***') : String(s));
+
+/** FREE_PLAY_BEST -> "Free play best". The fallback when nothing better exists. */
+function prettify(name) {
+  const s = String(name || '').replace(/[_-]+/g, ' ').trim().toLowerCase();
+  return s ? s[0].toUpperCase() + s.slice(1) : '';
+}
+
+function labelFor(board) {
+  return board.display || LABELS[board.name] || prettify(board.name) || 'Standings';
+}
+
 /** Fetch JSON, tolerating the leaderboard endpoints' habit of answering XML. */
 async function get(url) {
-  const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+  const res = await fetch(url, { headers: { accept: 'application/json' } });
   const text = await res.text();
   if (!res.ok) {
-    throw new Error(`HTTP ${res.status} for ${url.replace(KEY, '***')} — ${text.slice(0, 200)}`);
+    throw new Error(`HTTP ${res.status} for ${redact(url)} — ${redact(text.slice(0, 200))}`);
   }
   try {
     return { json: JSON.parse(text), xml: null };
@@ -72,21 +102,118 @@ function xmlEntries(xml, tag, fields) {
   return out;
 }
 
+/**
+ * A snapshot with no rows in it. Board names are preserved across a pending
+ * write so the page can still label its tabs before the first real fetch.
+ */
 async function writePending(note) {
   let previous = {};
   try { previous = JSON.parse(await readFile(OUT, 'utf8')); } catch { /* first run */ }
 
+  const boards = WANT.length
+    ? WANT.map((name) => ({
+        key: name,
+        id: null,
+        name: LABELS[name] || prettify(name),
+        detailLabel: 'Detail',
+        status: 'pending',
+        note,
+        entries: [],
+      }))
+    : (previous.boards || []).map((b) => ({ ...b, status: 'pending', note, entries: [] }));
+
   const doc = {
     status: 'pending',
     appId: APP ? Number(APP) : null,
-    leaderboard: previous.leaderboard || { id: null, name: 'Global standings' },
-    detailLabel: previous.detailLabel || 'Best run',
     updated: null,
-    entries: [],
     note,
+    boards: boards.length
+      ? boards
+      : [{
+          key: null,
+          id: null,
+          name: 'Global standings',
+          detailLabel: 'Detail',
+          status: 'pending',
+          note,
+          entries: [],
+        }],
   };
+
   await writeFile(OUT, JSON.stringify(doc, null, 2) + '\n');
   console.log('wrote pending snapshot:', note);
+}
+
+/** Every leaderboard defined on the app. */
+async function listBoards() {
+  const listed = await get(
+    `${PARTNER}/ISteamLeaderboards/GetLeaderboardsForGame/v2/` +
+    `?key=${KEY}&appid=${APP}&format=json`
+  );
+
+  if (listed.json) {
+    return (listed.json?.response?.leaderboards || []).map((b) => ({
+      id: String(b.id ?? b.leaderBoardID ?? ''),
+      name: b.name ?? b.leaderBoardName ?? '',
+      display: b.display_name ?? b.leaderBoardDisplayName ?? '',
+      sortMethod: b.sortmethod ?? b.leaderBoardSortMethod ?? '',
+    }));
+  }
+
+  return xmlEntries(listed.xml, 'leaderboard',
+    ['leaderBoardID', 'leaderBoardName', 'display_name', 'leaderBoardSortMethod'])
+    .map((b) => ({
+      id: b.leaderBoardID,
+      name: b.leaderBoardName,
+      display: b.display_name || '',
+      sortMethod: b.leaderBoardSortMethod || '',
+    }));
+}
+
+/** The top rows of one board, as {steamId, score, rank}. */
+async function fetchRows(board) {
+  const got = await get(
+    `${PARTNER}/ISteamLeaderboards/GetLeaderboardEntries/v1/` +
+    `?key=${KEY}&appid=${APP}&leaderboardid=${board.id}` +
+    `&rangestart=0&rangeend=${Math.max(0, TOP - 1)}` +
+    `&datarequest=RequestGlobal&format=json`
+  );
+
+  if (got.json) {
+    return (got.json?.leaderboardEntryInformation?.leaderboardEntries || []).map((e) => ({
+      steamId: String(e.steamID ?? e.steamid ?? ''),
+      score: Number(e.score ?? 0),
+      rank: Number(e.rank ?? 0),
+    }));
+  }
+
+  return xmlEntries(got.xml, 'entry', ['steamid', 'score', 'rank']).map((e) => ({
+    steamId: e.steamid,
+    score: Number(e.score || 0),
+    rank: Number(e.rank || 0),
+  }));
+}
+
+/**
+ * Resolve steam ids to display names, for every board at once. 100 ids per
+ * call is the documented cap, and the same player is very likely to sit on
+ * both boards — so this dedupes before it pages.
+ */
+async function resolveNames(ids) {
+  const unique = [...new Set(ids.filter(Boolean))];
+  const names = new Map();
+
+  for (let i = 0; i < unique.length; i += 100) {
+    const batch = unique.slice(i, i + 100).join(',');
+    const sum = await get(
+      `${PUBLIC}/ISteamUser/GetPlayerSummaries/v2/?key=${KEY}&steamids=${batch}&format=json`
+    );
+    for (const p of sum.json?.response?.players || []) {
+      names.set(String(p.steamid), { name: p.personaname, profile: p.profileurl });
+    }
+  }
+
+  return names;
 }
 
 async function main() {
@@ -97,97 +224,43 @@ async function main() {
     return;
   }
 
-  // 1. Which leaderboards does this app have?
-  const listUrl =
-    `${PARTNER}/ISteamLeaderboards/GetLeaderboardsForGame/v2/` +
-    `?key=${KEY}&appid=${APP}&format=json`;
-
-  const listed = await get(listUrl);
-  let boards = [];
-
-  if (listed.json) {
-    boards = (listed.json?.response?.leaderboards || []).map((b) => ({
-      id: String(b.id ?? b.leaderBoardID ?? ''),
-      name: b.name ?? b.leaderBoardName ?? '',
-      display: b.display_name ?? b.leaderBoardDisplayName ?? '',
-      sortMethod: b.sortmethod ?? b.leaderBoardSortMethod ?? '',
-    }));
-  } else {
-    boards = xmlEntries(listed.xml, 'leaderboard',
-      ['leaderBoardID', 'leaderBoardName', 'display_name', 'leaderBoardSortMethod'])
-      .map((b) => ({
-        id: b.leaderBoardID,
-        name: b.leaderBoardName,
-        display: b.display_name || '',
-        sortMethod: b.leaderBoardSortMethod || '',
-      }));
-  }
-
-  if (!boards.length) {
+  const all = await listBoards();
+  if (!all.length) {
     await writePending('The app has no leaderboards yet.');
     return;
   }
 
-  const board = WANT
-    ? boards.find((b) => b.name === WANT || b.display === WANT)
-    : boards[0];
+  // An explicit list also fixes the order the page shows them in; without one,
+  // take every board in whatever order Steam lists them.
+  const chosen = WANT.length
+    ? WANT.map((want) => all.find((b) => b.name === want || b.display === want)).filter(Boolean)
+    : all;
 
-  if (!board) {
-    await writePending(`No leaderboard named "${WANT}" on app ${APP}.`);
+  if (!chosen.length) {
+    await writePending(`No leaderboard named ${WANT.map((w) => `"${w}"`).join(' or ')} on app ${APP}.`);
     return;
   }
 
-  // 2. The top N rows.
-  const entriesUrl =
-    `${PARTNER}/ISteamLeaderboards/GetLeaderboardEntries/v1/` +
-    `?key=${KEY}&appid=${APP}&leaderboardid=${board.id}` +
-    `&rangestart=0&rangeend=${Math.max(0, TOP - 1)}` +
-    `&datarequest=RequestGlobal&format=json`;
+  const missing = WANT.filter((w) => !all.some((b) => b.name === w || b.display === w));
+  for (const name of missing) console.warn(`warning: no leaderboard named "${name}" on app ${APP}`);
 
-  const got = await get(entriesUrl);
-  let rows = [];
-
-  if (got.json) {
-    rows = (got.json?.leaderboardEntryInformation?.leaderboardEntries || []).map((e) => ({
-      steamId: String(e.steamID ?? e.steamid ?? ''),
-      score: Number(e.score ?? 0),
-      rank: Number(e.rank ?? 0),
-    }));
-  } else {
-    rows = xmlEntries(got.xml, 'entry', ['steamid', 'score', 'rank']).map((e) => ({
-      steamId: e.steamid,
-      score: Number(e.score || 0),
-      rank: Number(e.rank || 0),
-    }));
+  const fetched = [];
+  for (const board of chosen) {
+    fetched.push({ board, rows: await fetchRows(board) });
   }
 
-  if (!rows.length) {
-    await writePending('The leaderboard exists but nobody has posted a score yet.');
-    return;
-  }
+  const names = await resolveNames(fetched.flatMap((f) => f.rows.map((r) => r.steamId)));
 
-  // 3. Turn steam ids into display names. 100 ids per call is the documented cap.
-  const names = new Map();
-  for (let i = 0; i < rows.length; i += 100) {
-    const ids = rows.slice(i, i + 100).map((r) => r.steamId).filter(Boolean).join(',');
-    if (!ids) continue;
-    const sum = await get(
-      `${PUBLIC}/ISteamUser/GetPlayerSummaries/v2/?key=${KEY}&steamids=${ids}&format=json`
-    );
-    for (const p of sum.json?.response?.players || []) {
-      names.set(String(p.steamid), { name: p.personaname, profile: p.profileurl });
-    }
-  }
-
-  const doc = {
-    status: 'ok',
-    appId: Number(APP),
-    leaderboard: { id: board.id, name: board.display || board.name },
+  const boards = fetched.map(({ board, rows }) => ({
+    key: board.name || null,
+    id: board.id,
+    name: labelFor(board),
     // Only shown when entries carry a `detail`. Steam's leaderboard entries
     // can hold extra game-supplied details; wire them in here when the game
     // starts uploading them.
     detailLabel: 'Detail',
-    updated: new Date().toISOString(),
+    status: rows.length ? 'ok' : 'pending',
+    note: rows.length ? '' : 'Nobody has posted a score on this board yet.',
     entries: rows
       .sort((a, b) => a.rank - b.rank)
       .slice(0, TOP)
@@ -203,15 +276,33 @@ async function main() {
           detail: '',
         };
       }),
+  }));
+
+  const total = boards.reduce((n, b) => n + b.entries.length, 0);
+  if (!total) {
+    await writePending('The leaderboards exist but nobody has posted a score yet.');
+    return;
+  }
+
+  const doc = {
+    // "ok" means at least one board has rows; a board that is still empty
+    // carries its own pending status and renders its own empty state.
+    status: 'ok',
+    appId: Number(APP),
+    updated: new Date().toISOString(),
     note: '',
+    boards,
   };
 
   await writeFile(OUT, JSON.stringify(doc, null, 2) + '\n');
-  console.log(`wrote ${doc.entries.length} entries from "${doc.leaderboard.name}"`);
+  console.log(
+    `wrote ${total} entries across ${boards.length} board(s): ` +
+    boards.map((b) => `${b.name} (${b.entries.length})`).join(', ')
+  );
 }
 
-main().catch(async (err) => {
-  console.error(err.message);
+main().catch((err) => {
+  console.error(redact(err.message));
   // A failed fetch must not publish an empty board over a good one.
   process.exitCode = 1;
 });

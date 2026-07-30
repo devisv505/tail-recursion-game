@@ -757,6 +757,34 @@ table.lb .score { text-align: right; color: var(--green); }
 }
 .lb-empty span { font-size: 13px; }
 
+/* One tab per Steam leaderboard. Only drawn when there are two or more, so
+ * these rules never apply to a single board. */
+.lb-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -4px 0 16px;
+  border-bottom: 1px solid var(--line-2);
+}
+.lb-tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;      /* sit the underline on the strip's own border */
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.lb-tab:first-child { padding-left: 10px; }   /* align with the table's first column */
+.lb-tab:hover { color: var(--text-bright); }
+.lb-tab.is-on { color: var(--green); border-bottom-color: var(--green); }
+
+#lb-view:focus-visible { outline-offset: -2px; }
+
 .blink { animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .blink { animation: none; } }

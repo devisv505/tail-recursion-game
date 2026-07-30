@@ -1,12 +1,26 @@
 {
   "status": "pending",
   "appId": null,
-  "leaderboard": {
-    "id": null,
-    "name": "Global standings"
-  },
-  "detailLabel": "Detail",
   "updated": null,
-  "entries": [],
-  "note": "No Steam app id or API key is configured yet, so there is no leaderboard to read."
+  "note": "No Steam app id or API key is configured yet, so there is no leaderboard to read.",
+  "boards": [
+    {
+      "key": "FREE_PLAY_BEST",
+      "id": null,
+      "name": "Free play",
+      "detailLabel": "Detail",
+      "status": "pending",
+      "note": "No Steam app id or API key is configured yet, so there is no leaderboard to read.",
+      "entries": []
+    },
+    {
+      "key": "PUZZLE_SCORE",
+      "id": null,
+      "name": "Puzzles",
+      "detailLabel": "Detail",
+      "status": "pending",
+      "note": "No Steam app id or API key is configured yet, so there is no leaderboard to read.",
+      "entries": []
+    }
+  ]
 }

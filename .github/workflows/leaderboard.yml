@@ -8,9 +8,11 @@ name: Refresh standings
 #
 # Setup, once the game has a real app id:
 #   Settings -> Secrets and variables -> Actions
-#     secret   STEAM_API_KEY           publisher Web API key
-#     variable STEAM_APP_ID            the app id
-#     variable STEAM_LEADERBOARD_NAME  optional; defaults to the first board
+#     secret   STEAM_API_KEY            publisher Web API key
+#     variable STEAM_APP_ID             the app id
+#     variable STEAM_LEADERBOARD_NAMES  optional; comma-separated, and it also
+#                                       fixes the tab order on the page.
+#                                       Defaults to every board on the app.
 #
 # Until then the job runs, finds no configuration, and writes the same
 # "pending" file the site already ships — which is why it is safe to enable now.
@@ -41,7 +43,7 @@ jobs:
         env:
           STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
           STEAM_APP_ID: ${{ vars.STEAM_APP_ID }}
-          STEAM_LEADERBOARD_NAME: ${{ vars.STEAM_LEADERBOARD_NAME }}
+          STEAM_LEADERBOARD_NAMES: ${{ vars.STEAM_LEADERBOARD_NAMES }}
           STEAM_TOP_N: '25'
         run: node tools/fetch-leaderboard.mjs
 
