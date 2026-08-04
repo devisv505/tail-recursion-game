@@ -52,6 +52,7 @@ const BASE = detectBase()
 
 const STUDIO = 'DEV505';
 const YOUTUBE = 'https://www.youtube.com/@devisv505';
+const STEAM = 'https://store.steampowered.com/app/5027510/Tail_Recursion/';
 
 const PAGES = [
   {
@@ -112,6 +113,9 @@ function gameSchema(url) {
     name: 'Tail Recursion',
     alternateName: 'Tail Recursion Game',
     url: url + '/',
+    // The store page is the same game under another URL, which is exactly what
+    // sameAs is for — it is not an offer, so no price or availability here.
+    sameAs: [STEAM],
     image: url + '/assets/icon-512.png',
     description: PAGES[0].description,
     genre: ['Puzzle', 'Programming game', 'Automation'],

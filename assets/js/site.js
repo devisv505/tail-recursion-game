@@ -48,7 +48,7 @@
     { key: 'youtube', label: 'Watch on YouTube', cls: 'btn--yt',
       blurb: 'Devlogs and build breakdowns from the studio.' },
     { key: 'steam', label: 'Steam page', cls: '',
-      blurb: 'Wishlist and release. The store page is not up yet.' },
+      blurb: 'Wishlist it there and hear about the release first.' },
     { key: 'discord', label: 'Discord', cls: '',
       blurb: 'Share programs, compare block counts, report bugs.' },
   ];

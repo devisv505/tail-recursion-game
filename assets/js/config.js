@@ -13,17 +13,17 @@ window.SITE_CONFIG = {
     // Live.
     youtube: 'https://www.youtube.com/@devisv505',
     discord: 'https://discord.gg/q9T9UcjAZv',
+    steam:   'https://store.steampowered.com/app/5027510/Tail_Recursion/',
 
     // Fill this in when it exists.
-    steam:   null,   // e.g. 'https://store.steampowered.com/app/3210000/Tail_Recursion/'
     github:  null,   // optional: link to the game repo if you make it public
   },
 
   steam: {
-    // The real app id, once Steamworks issues one. 480 is Valve's shared
-    // Spacewar development app and can never host a build or a leaderboard,
-    // so the standings panel stays in "coming soon" until this is a real id.
-    appId: null,
+    // The app id Steamworks issued. Recorded here so the store link and the
+    // leaderboard job cannot drift apart; the job itself reads the id from the
+    // STEAM_APP_ID repository variable, not from this file.
+    appId: 5027510,
 
     // Where the GitHub Action writes its snapshot. Relative so the site works
     // from a project page (user.github.io/repo/) as well as a root domain.
