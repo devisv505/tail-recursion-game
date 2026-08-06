@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-06T09:08:24.341Z",
+  "updated": "2026-08-06T14:36:50.530Z",
   "note": "",
   "boards": [
     {
@@ -21,6 +21,13 @@
         },
         {
           "rank": 2,
+          "name": "Scout",
+          "profile": "https://steamcommunity.com/profiles/76561198815220267/",
+          "score": 3,
+          "detail": ""
+        },
+        {
+          "rank": 3,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 3,
@@ -48,6 +55,13 @@
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 21,
+          "detail": ""
+        },
+        {
+          "rank": 3,
+          "name": "Scout",
+          "profile": "https://steamcommunity.com/profiles/76561198815220267/",
+          "score": 0,
           "detail": ""
         }
       ]
