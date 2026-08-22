@@ -64,13 +64,21 @@
     return box;
   }
 
+  /* Rows per page. The fetch job caps a board at 25 entries, so this is a
+   * short pager — prev, next and a count, with no page numbers to crowd. */
+  var PAGE = 10;
+
   function tableView(board) {
+    var entries = board.entries;
+    var pages = Math.ceil(entries.length / PAGE);
+    var at = 0;
+
     var t = document.createElement('table');
     t.className = 'lb';
 
     // Only show the detail column when something actually fills it — an empty
     // column under a confident heading reads as missing data.
-    var hasDetail = board.entries.some(function (e) { return e.detail; });
+    var hasDetail = entries.some(function (e) { return e.detail; });
     var cols = ['#', 'Player'];
     if (hasDetail) cols.push(board.detailLabel || 'Detail');
     cols.push('Score');
@@ -88,12 +96,17 @@
     t.appendChild(thead);
 
     var body = document.createElement('tbody');
-    board.entries.forEach(function (e, i) {
+    t.appendChild(body);
+
+    function row(e, i) {
       var tr = document.createElement('tr');
 
+      // The medal colours follow the standing itself, not the row's position on
+      // the page — otherwise rank 11 would open page two wearing gold.
+      var place = e.rank != null ? e.rank : i + 1;
       var rank = document.createElement('td');
-      rank.className = 'rank';
-      rank.textContent = String(e.rank != null ? e.rank : i + 1).padStart(2, '0');
+      rank.className = 'rank' + (place <= 3 ? ' rank--' + place : '');
+      rank.textContent = String(place).padStart(2, '0');
 
       // Player names come from Steam, so they are untrusted text and are set
       // as text, never as markup.
@@ -124,11 +137,81 @@
         tr.appendChild(detail);
       }
       tr.appendChild(score);
-      body.appendChild(tr);
-    });
+      return tr;
+    }
 
-    t.appendChild(body);
-    return t;
+    /* An empty slot. A short last page would otherwise shrink the table and
+     * walk the pager out from under the cursor between two clicks. */
+    function padRow() {
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-pad', '');
+      tr.setAttribute('aria-hidden', 'true');
+      var td = document.createElement('td');
+      td.colSpan = cols.length;
+      td.textContent = '\u00a0';
+      tr.appendChild(td);
+      return tr;
+    }
+
+    // One page of standings is just a table.
+    if (pages < 2) {
+      entries.forEach(function (e, i) { body.appendChild(row(e, i)); });
+      return t;
+    }
+
+    var count = document.createElement('span');
+    count.className = 'lb-page__count';
+    count.setAttribute('role', 'status');    // announces the new range on paging
+
+    var prev = document.createElement('button');
+    prev.type = 'button';
+    prev.className = 'btn';
+    prev.innerHTML = '&#8592; PREV';
+
+    var next = document.createElement('button');
+    next.type = 'button';
+    next.className = 'btn';
+    next.innerHTML = 'NEXT &#8594;';
+
+    function show(i, pressed) {
+      at = Math.min(Math.max(i, 0), pages - 1);
+
+      var from = at * PAGE;
+      var slice = entries.slice(from, from + PAGE);
+
+      body.innerHTML = '';
+      slice.forEach(function (e, j) { body.appendChild(row(e, from + j)); });
+      for (var k = slice.length; k < PAGE; k++) body.appendChild(padRow());
+
+      count.textContent = (from + 1) + '\u2013' + (from + slice.length) +
+        ' of ' + entries.length;
+      prev.disabled = at === 0;
+      next.disabled = at === pages - 1;
+
+      // Reaching either end disables the button that was just pressed, and a
+      // disabled button drops focus to the document. Hand it to its neighbour.
+      if (pressed && pressed.disabled) (pressed === prev ? next : prev).focus();
+    }
+
+    prev.addEventListener('click', function () { show(at - 1, prev); });
+    next.addEventListener('click', function () { show(at + 1, next); });
+
+    var ctrl = document.createElement('span');
+    ctrl.className = 'lb-page__ctrl';
+    ctrl.appendChild(prev);
+    ctrl.appendChild(next);
+
+    var bar = document.createElement('div');
+    bar.className = 'lb-page';
+    bar.appendChild(count);
+    bar.appendChild(ctrl);
+
+    var wrap = document.createElement('div');
+    wrap.appendChild(t);
+    wrap.appendChild(bar);
+
+    show(0);
+    return wrap;
   }
 
   function viewFor(board, fallbackNote) {

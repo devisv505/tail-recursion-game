@@ -736,10 +736,34 @@ table.lb th {
 table.lb td { padding: 8px 10px; border-bottom: 1px solid var(--line); color: var(--text); }
 table.lb tr:hover td { background: var(--panel-2); }
 table.lb .rank { color: var(--text-dim); width: 56px; }
-table.lb tr:nth-child(1) .rank { color: var(--amber); }
-table.lb tr:nth-child(2) .rank { color: #c9d4da; }
-table.lb tr:nth-child(3) .rank { color: #b3763c; }
+/* Keyed to the standing, not the row: page two must not open in gold. */
+table.lb .rank--1 { color: var(--amber); }
+table.lb .rank--2 { color: #c9d4da; }
+table.lb .rank--3 { color: #b3763c; }
 table.lb .score { text-align: right; color: var(--green); }
+
+/* A short last page is padded out to full height, so the pager below stays
+ * where the cursor left it. The slots are empty and hidden from the a11y tree. */
+table.lb tr[data-pad] td { color: transparent; }
+table.lb tr[data-pad]:hover td { background: none; }
+
+/* Only drawn for a board with more rows than one page holds. */
+.lb-page {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.lb-page__count {
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.lb-page__ctrl { display: flex; gap: 6px; margin-left: auto; }
+.lb-page__ctrl .btn { padding: 6px 11px; font-size: 11px; }
+.lb-page__ctrl .btn[disabled] { opacity: .35; cursor: default; }
 
 .lb-empty {
   border: 1px dashed var(--line-2);
