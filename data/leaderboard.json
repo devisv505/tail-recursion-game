@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-23T07:03:05.565Z",
+  "updated": "2026-08-23T13:03:37.926Z",
   "note": "",
   "boards": [
     {
@@ -14,118 +14,111 @@
       "entries": [
         {
           "rank": 1,
-          "name": "isaac.wass (aaaaaaaa)",
-          "profile": "https://steamcommunity.com/id/isaacwass/",
-          "score": 792624,
-          "detail": ""
-        },
-        {
-          "rank": 2,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 1313,
           "detail": ""
         },
         {
-          "rank": 3,
+          "rank": 2,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
           "score": 56,
           "detail": ""
         },
         {
-          "rank": 4,
+          "rank": 3,
           "name": "devisv505",
           "profile": "https://steamcommunity.com/id/devisv505/",
           "score": 47,
           "detail": ""
         },
         {
-          "rank": 5,
+          "rank": 4,
           "name": "fchabi",
           "profile": "https://steamcommunity.com/profiles/76561198685521206/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 6,
+          "rank": 5,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 6,
           "name": "sargeantSasquatch",
           "profile": "https://steamcommunity.com/profiles/76561198131931136/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 8,
+          "rank": 7,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 9,
+          "rank": 8,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 9,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 10,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 11,
           "name": "Zoltyen no title",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 12,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 13,
           "name": "Plague Head",
           "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 14,
           "name": "shaf",
           "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 15,
           "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
           "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 16,
           "name": "BlueRaja",
           "profile": "https://steamcommunity.com/id/BlueRaja/",
           "score": 1,
@@ -143,118 +136,111 @@
       "entries": [
         {
           "rank": 1,
-          "name": "isaac.wass (aaaaaaaa)",
-          "profile": "https://steamcommunity.com/id/isaacwass/",
-          "score": 1377,
-          "detail": ""
-        },
-        {
-          "rank": 2,
           "name": "devisv505",
           "profile": "https://steamcommunity.com/id/devisv505/",
           "score": 257,
           "detail": ""
         },
         {
-          "rank": 3,
+          "rank": 2,
           "name": "Zoltyen no title",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 91,
           "detail": ""
         },
         {
-          "rank": 4,
+          "rank": 3,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
           "score": 42,
           "detail": ""
         },
         {
-          "rank": 5,
+          "rank": 4,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 6,
+          "rank": 5,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 22,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 6,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 21,
           "detail": ""
         },
         {
-          "rank": 8,
+          "rank": 7,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 9,
+          "rank": 8,
           "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
           "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 9,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 10,
           "name": "BlueRaja",
           "profile": "https://steamcommunity.com/id/BlueRaja/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 11,
           "name": "shaf",
           "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 10,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 12,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 13,
           "name": "fchabi",
           "profile": "https://steamcommunity.com/profiles/76561198685521206/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 14,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 15,
           "name": "Plague Head",
           "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 16,
           "name": "sargeantSasquatch",
           "profile": "https://steamcommunity.com/profiles/76561198131931136/",
           "score": 0,
