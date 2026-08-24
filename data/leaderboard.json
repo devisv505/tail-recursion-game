@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-24T07:30:28.609Z",
+  "updated": "2026-08-24T13:15:28.804Z",
   "note": "",
   "boards": [
     {
@@ -21,16 +21,16 @@
         },
         {
           "rank": 2,
-          "name": "ilya-babanov",
-          "profile": "https://steamcommunity.com/profiles/76561198110361681/",
-          "score": 1313,
+          "name": "devisv505",
+          "profile": "https://steamcommunity.com/id/devisv505/",
+          "score": 266091,
           "detail": ""
         },
         {
           "rank": 3,
-          "name": "devisv505",
-          "profile": "https://steamcommunity.com/id/devisv505/",
-          "score": 47,
+          "name": "ilya-babanov",
+          "profile": "https://steamcommunity.com/profiles/76561198110361681/",
+          "score": 1313,
           "detail": ""
         },
         {
@@ -173,7 +173,7 @@
           "rank": 2,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
-          "score": 140,
+          "score": 209,
           "detail": ""
         },
         {
