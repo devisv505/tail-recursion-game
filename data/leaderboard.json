@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-24T13:15:28.804Z",
+  "updated": "2026-08-24T19:01:10.323Z",
   "note": "",
   "boards": [
     {
@@ -173,7 +173,7 @@
           "rank": 2,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
-          "score": 209,
+          "score": 252,
           "detail": ""
         },
         {
@@ -220,64 +220,64 @@
         },
         {
           "rank": 9,
+          "name": "Zereth",
+          "profile": "https://steamcommunity.com/id/elarkaso/",
+          "score": 11,
+          "detail": ""
+        },
+        {
+          "rank": 10,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 11,
           "name": "ConsciousCarbon",
           "profile": "https://steamcommunity.com/id/Gamervote/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 12,
           "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
           "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "BlueRaja",
           "profile": "https://steamcommunity.com/id/BlueRaja/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "shaf",
           "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 10,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "fchabi",
           "profile": "https://steamcommunity.com/profiles/76561198685521206/",
-          "score": 0,
-          "detail": ""
-        },
-        {
-          "rank": 17,
-          "name": "Zereth",
-          "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 0,
           "detail": ""
         },
