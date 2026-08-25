@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-25T13:13:18.026Z",
+  "updated": "2026-08-25T18:59:14.538Z",
   "note": "",
   "boards": [
     {
@@ -30,7 +30,7 @@
           "rank": 3,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
-          "score": 1313,
+          "score": 12181,
           "detail": ""
         },
         {
@@ -173,7 +173,7 @@
           "rank": 1,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
-          "score": 429,
+          "score": 468,
           "detail": ""
         },
         {
@@ -192,51 +192,51 @@
         },
         {
           "rank": 4,
+          "name": "Everwinter",
+          "profile": "https://steamcommunity.com/id/kaze_katsuya/",
+          "score": 34,
+          "detail": ""
+        },
+        {
+          "rank": 5,
+          "name": "normal",
+          "profile": "https://steamcommunity.com/profiles/76561199401185824/",
+          "score": 25,
+          "detail": ""
+        },
+        {
+          "rank": 6,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 5,
+          "rank": 7,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 6,
+          "rank": 8,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 9,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 8,
-          "name": "Everwinter",
-          "profile": "https://steamcommunity.com/id/kaze_katsuya/",
-          "score": 22,
-          "detail": ""
-        },
-        {
-          "rank": 9,
+          "rank": 10,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 21,
-          "detail": ""
-        },
-        {
-          "rank": 10,
-          "name": "normal",
-          "profile": "https://steamcommunity.com/profiles/76561199401185824/",
-          "score": 11,
           "detail": ""
         },
         {
