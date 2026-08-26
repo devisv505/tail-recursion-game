@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-08-26T13:18:07.101Z",
+  "updated": "2026-08-26T20:05:17.373Z",
   "note": "",
   "boards": [
     {
@@ -84,99 +84,99 @@
         },
         {
           "rank": 11,
+          "name": "Taeterific",
+          "profile": "https://steamcommunity.com/id/Taeterific/",
+          "score": 43,
+          "detail": ""
+        },
+        {
+          "rank": 12,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 7,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "Instixic",
           "profile": "https://steamcommunity.com/profiles/76561198002001538/",
           "score": 6,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "Zoltyen no title",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 18,
           "name": "gordoboy300",
           "profile": "https://steamcommunity.com/profiles/76561199770703974/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 18,
+          "rank": 19,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 19,
+          "rank": 20,
           "name": "Plague Head",
           "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 20,
+          "rank": 21,
           "name": "ConsciousCarbon",
           "profile": "https://steamcommunity.com/id/Gamervote/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "shaf",
           "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
           "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "boxMuncher9000",
           "profile": "https://steamcommunity.com/profiles/76561198083219522/",
-          "score": 1,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "Taeterific",
-          "profile": "https://steamcommunity.com/id/Taeterific/",
           "score": 1,
           "detail": ""
         }
@@ -194,7 +194,7 @@
           "rank": 1,
           "name": "Shinyklaxx",
           "profile": "https://steamcommunity.com/profiles/76561197997509843/",
-          "score": 678,
+          "score": 710,
           "detail": ""
         },
         {
@@ -208,7 +208,7 @@
           "rank": 3,
           "name": "Instixic",
           "profile": "https://steamcommunity.com/profiles/76561198002001538/",
-          "score": 221,
+          "score": 245,
           "detail": ""
         },
         {
