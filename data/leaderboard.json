@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-02T16:37:25.553Z",
+  "updated": "2026-09-02T21:05:38.841Z",
   "note": "",
   "boards": [
     {
@@ -126,57 +126,57 @@
         },
         {
           "rank": 17,
+          "name": "gecsus777",
+          "profile": "https://steamcommunity.com/profiles/76561198384299591/",
+          "score": 3,
+          "detail": ""
+        },
+        {
+          "rank": 18,
           "name": "Zoltyen no title",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 18,
+          "rank": 19,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 19,
+          "rank": 20,
           "name": "gordoboy300",
           "profile": "https://steamcommunity.com/profiles/76561199770703974/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 20,
+          "rank": 21,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "Plague Head",
           "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "ConsciousCarbon",
           "profile": "https://steamcommunity.com/id/Gamervote/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "shaf",
           "profile": "https://steamcommunity.com/id/lshaf/",
-          "score": 1,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
-          "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 1,
           "detail": ""
         }
@@ -346,15 +346,15 @@
         },
         {
           "rank": 23,
-          "name": "Plague Head",
-          "profile": "https://steamcommunity.com/id/Plague_Head/",
+          "name": "gecsus777",
+          "profile": "https://steamcommunity.com/profiles/76561198384299591/",
           "score": 0,
           "detail": ""
         },
         {
           "rank": 24,
-          "name": "omri",
-          "profile": "https://steamcommunity.com/profiles/76561198164398813/",
+          "name": "Plague Head",
+          "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 0,
           "detail": ""
         }
