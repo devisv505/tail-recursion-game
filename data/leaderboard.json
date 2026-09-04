@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-03T21:04:38.959Z",
+  "updated": "2026-09-04T04:38:02.674Z",
   "note": "",
   "boards": [
     {
@@ -332,29 +332,29 @@
         },
         {
           "rank": 21,
+          "name": "simbiote4",
+          "profile": "https://steamcommunity.com/id/simbiote3/",
+          "score": 10,
+          "detail": ""
+        },
+        {
+          "rank": 22,
           "name": "gordoboy300",
           "profile": "https://steamcommunity.com/profiles/76561199770703974/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 0,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "fchabi",
           "profile": "https://steamcommunity.com/profiles/76561198685521206/",
-          "score": 0,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "gecsus777",
-          "profile": "https://steamcommunity.com/profiles/76561198384299591/",
           "score": 0,
           "detail": ""
         }
