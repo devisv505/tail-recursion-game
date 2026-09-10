@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-09T20:58:04.532Z",
+  "updated": "2026-09-10T04:47:35.321Z",
   "note": "",
   "boards": [
     {
@@ -147,36 +147,36 @@
         },
         {
           "rank": 20,
+          "name": "kaspalone",
+          "profile": "https://steamcommunity.com/id/kaspalone/",
+          "score": 3,
+          "detail": ""
+        },
+        {
+          "rank": 21,
           "name": "gordoboy300",
           "profile": "https://steamcommunity.com/profiles/76561199770703974/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "Plague Head",
           "profile": "https://steamcommunity.com/id/Plague_Head/",
           "score": 1,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "ConsciousCarbon",
           "profile": "https://steamcommunity.com/id/Gamervote/",
-          "score": 1,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "shaf",
-          "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 1,
           "detail": ""
         }
