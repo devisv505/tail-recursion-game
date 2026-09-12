@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-12T10:51:19.482Z",
+  "updated": "2026-09-12T15:34:38.378Z",
   "note": "",
   "boards": [
     {
@@ -49,79 +49,79 @@
         },
         {
           "rank": 6,
+          "name": "maciej",
+          "profile": "https://steamcommunity.com/profiles/76561198821502966/",
+          "score": 43,
+          "detail": ""
+        },
+        {
+          "rank": 7,
           "name": "fchabi",
           "profile": "https://steamcommunity.com/profiles/76561198685521206/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 8,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 8,
+          "rank": 9,
           "name": "omri",
           "profile": "https://steamcommunity.com/profiles/76561198164398813/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 9,
+          "rank": 10,
           "name": "sargeantSasquatch",
           "profile": "https://steamcommunity.com/profiles/76561198131931136/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 11,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 12,
           "name": "ChoiceHoney",
           "profile": "https://steamcommunity.com/id/gabe1118/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "Taeterific",
           "profile": "https://steamcommunity.com/id/Taeterific/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 7,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "Instixic",
           "profile": "https://steamcommunity.com/profiles/76561198002001538/",
           "score": 6,
-          "detail": ""
-        },
-        {
-          "rank": 16,
-          "name": "maciej",
-          "profile": "https://steamcommunity.com/profiles/76561198821502966/",
-          "score": 3,
           "detail": ""
         },
         {
@@ -220,36 +220,36 @@
         },
         {
           "rank": 5,
+          "name": "maciej",
+          "profile": "https://steamcommunity.com/profiles/76561198821502966/",
+          "score": 57,
+          "detail": ""
+        },
+        {
+          "rank": 6,
           "name": "boxMuncher9000",
           "profile": "https://steamcommunity.com/profiles/76561198083219522/",
           "score": 55,
           "detail": ""
         },
         {
-          "rank": 6,
+          "rank": 7,
           "name": "auaahks",
           "profile": "https://steamcommunity.com/profiles/76561198434082185/",
           "score": 54,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 8,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 34,
           "detail": ""
         },
         {
-          "rank": 8,
+          "rank": 9,
           "name": "normal",
           "profile": "https://steamcommunity.com/profiles/76561199401185824/",
-          "score": 25,
-          "detail": ""
-        },
-        {
-          "rank": 9,
-          "name": "maciej",
-          "profile": "https://steamcommunity.com/profiles/76561198821502966/",
           "score": 25,
           "detail": ""
         },
