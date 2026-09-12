@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-12T15:34:38.378Z",
+  "updated": "2026-09-12T20:35:46.363Z",
   "note": "",
   "boards": [
     {
@@ -21,16 +21,16 @@
         },
         {
           "rank": 2,
-          "name": "Shinyklaxx",
-          "profile": "https://steamcommunity.com/profiles/76561197997509843/",
-          "score": 743943,
+          "name": "auaahks",
+          "profile": "https://steamcommunity.com/profiles/76561198434082185/",
+          "score": 752801,
           "detail": ""
         },
         {
           "rank": 3,
-          "name": "auaahks",
-          "profile": "https://steamcommunity.com/profiles/76561198434082185/",
-          "score": 536176,
+          "name": "Shinyklaxx",
+          "profile": "https://steamcommunity.com/profiles/76561197997509843/",
+          "score": 743943,
           "detail": ""
         },
         {
@@ -213,30 +213,30 @@
         },
         {
           "rank": 4,
+          "name": "auaahks",
+          "profile": "https://steamcommunity.com/profiles/76561198434082185/",
+          "score": 158,
+          "detail": ""
+        },
+        {
+          "rank": 5,
           "name": "Zoltyen no title",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 91,
           "detail": ""
         },
         {
-          "rank": 5,
+          "rank": 6,
           "name": "maciej",
           "profile": "https://steamcommunity.com/profiles/76561198821502966/",
-          "score": 57,
-          "detail": ""
-        },
-        {
-          "rank": 6,
-          "name": "boxMuncher9000",
-          "profile": "https://steamcommunity.com/profiles/76561198083219522/",
-          "score": 55,
+          "score": 70,
           "detail": ""
         },
         {
           "rank": 7,
-          "name": "auaahks",
-          "profile": "https://steamcommunity.com/profiles/76561198434082185/",
-          "score": 54,
+          "name": "boxMuncher9000",
+          "profile": "https://steamcommunity.com/profiles/76561198083219522/",
+          "score": 55,
           "detail": ""
         },
         {
