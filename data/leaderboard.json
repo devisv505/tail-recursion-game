@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-18T20:56:34.089Z",
+  "updated": "2026-09-19T04:41:25.725Z",
   "note": "",
   "boards": [
     {
@@ -112,71 +112,71 @@
         },
         {
           "rank": 15,
+          "name": "Who Am I?",
+          "profile": "https://steamcommunity.com/id/WaI75/",
+          "score": 15,
+          "detail": ""
+        },
+        {
+          "rank": 16,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 7,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "Instixic",
           "profile": "https://steamcommunity.com/profiles/76561198002001538/",
           "score": 6,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 18,
           "name": "Scout",
           "profile": "https://steamcommunity.com/profiles/76561198815220267/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 18,
+          "rank": 19,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 19,
+          "rank": 20,
           "name": "gecsus777",
           "profile": "https://steamcommunity.com/profiles/76561198384299591/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 20,
+          "rank": 21,
           "name": "ZOLTYEN IR PPL",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "gekonshi",
           "profile": "https://steamcommunity.com/profiles/76561198037368699/",
           "score": 3,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "loskunos",
           "profile": "https://steamcommunity.com/profiles/76561198023206828/",
-          "score": 3,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "kaspalone",
-          "profile": "https://steamcommunity.com/id/kaspalone/",
           "score": 3,
           "detail": ""
         }
