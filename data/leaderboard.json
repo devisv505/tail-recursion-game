@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-09-26T11:29:02.259Z",
+  "updated": "2026-09-26T16:26:49.006Z",
   "note": "",
   "boards": [
     {
@@ -241,64 +241,64 @@
         },
         {
           "rank": 8,
+          "name": "Taeterific",
+          "profile": "https://steamcommunity.com/id/Taeterific/",
+          "score": 69,
+          "detail": ""
+        },
+        {
+          "rank": 9,
           "name": "boxMuncher9000",
           "profile": "https://steamcommunity.com/profiles/76561198083219522/",
           "score": 55,
           "detail": ""
         },
         {
-          "rank": 9,
+          "rank": 10,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 34,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 11,
           "name": "normal",
           "profile": "https://steamcommunity.com/profiles/76561199401185824/",
           "score": 25,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 12,
           "name": "Manshari_",
           "profile": "https://steamcommunity.com/profiles/76561198328814985/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
-          "score": 23,
-          "detail": ""
-        },
-        {
-          "rank": 16,
-          "name": "Taeterific",
-          "profile": "https://steamcommunity.com/id/Taeterific/",
           "score": 23,
           "detail": ""
         },
