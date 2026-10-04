@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-10-04T05:58:23.900Z",
+  "updated": "2026-10-04T12:26:04.118Z",
   "note": "",
   "boards": [
     {
@@ -220,142 +220,142 @@
         },
         {
           "rank": 5,
+          "name": "soynds",
+          "profile": "https://steamcommunity.com/profiles/76561198342741633/",
+          "score": 128,
+          "detail": ""
+        },
+        {
+          "rank": 6,
           "name": "avril",
           "profile": "https://steamcommunity.com/id/albela1124/",
           "score": 127,
           "detail": ""
         },
         {
-          "rank": 6,
+          "rank": 7,
           "name": "ZOLTYEN IR PPL",
           "profile": "https://steamcommunity.com/id/Zoltyen/",
           "score": 91,
           "detail": ""
         },
         {
-          "rank": 7,
+          "rank": 8,
           "name": "maciej",
           "profile": "https://steamcommunity.com/profiles/76561198821502966/",
           "score": 89,
           "detail": ""
         },
         {
-          "rank": 8,
+          "rank": 9,
           "name": "Taeterific",
           "profile": "https://steamcommunity.com/id/Taeterific/",
           "score": 69,
           "detail": ""
         },
         {
-          "rank": 9,
+          "rank": 10,
           "name": "boxMuncher9000",
           "profile": "https://steamcommunity.com/profiles/76561198083219522/",
           "score": 55,
           "detail": ""
         },
         {
-          "rank": 10,
+          "rank": 11,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 34,
           "detail": ""
         },
         {
-          "rank": 11,
+          "rank": 12,
           "name": "normal",
           "profile": "https://steamcommunity.com/profiles/76561199401185824/",
           "score": 25,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "Manshari_",
           "profile": "https://steamcommunity.com/profiles/76561198328814985/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "blood",
           "profile": "https://steamcommunity.com/id/bloodfall90/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 18,
           "name": "Mammon",
           "profile": "https://steamcommunity.com/profiles/76561198680667279/",
           "score": 21,
           "detail": ""
         },
         {
-          "rank": 18,
+          "rank": 19,
           "name": "williboi17",
           "profile": "https://steamcommunity.com/profiles/76561198279899053/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 19,
+          "rank": 20,
           "name": "ConsciousCarbon",
           "profile": "https://steamcommunity.com/id/Gamervote/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 20,
+          "rank": 21,
           "name": "ᐯᗝᎥᗪᔕᑕᗩᑭᗴ",
           "profile": "https://steamcommunity.com/id/WestrenRider/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "Kjell",
           "profile": "https://steamcommunity.com/profiles/76561198026748873/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "BlueRaja",
           "profile": "https://steamcommunity.com/id/BlueRaja/",
           "score": 11,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "u-moo",
-          "profile": "https://steamcommunity.com/id/we-have-two-testicles/",
-          "score": 10,
           "detail": ""
         }
       ]
