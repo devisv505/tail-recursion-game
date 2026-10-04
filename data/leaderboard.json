@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-10-03T21:21:58.523Z",
+  "updated": "2026-10-04T05:58:23.900Z",
   "note": "",
   "boards": [
     {
@@ -332,29 +332,29 @@
         },
         {
           "rank": 21,
+          "name": "Kjell",
+          "profile": "https://steamcommunity.com/profiles/76561198026748873/",
+          "score": 11,
+          "detail": ""
+        },
+        {
+          "rank": 22,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 22,
+          "rank": 23,
           "name": "BlueRaja",
           "profile": "https://steamcommunity.com/id/BlueRaja/",
           "score": 11,
           "detail": ""
         },
         {
-          "rank": 23,
+          "rank": 24,
           "name": "u-moo",
           "profile": "https://steamcommunity.com/id/we-have-two-testicles/",
-          "score": 10,
-          "detail": ""
-        },
-        {
-          "rank": 24,
-          "name": "shaf",
-          "profile": "https://steamcommunity.com/id/lshaf/",
           "score": 10,
           "detail": ""
         }
