@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "appId": 5027510,
-  "updated": "2026-11-09T22:25:14.529Z",
+  "updated": "2026-11-10T07:24:06.982Z",
   "note": "",
   "boards": [
     {
@@ -98,44 +98,44 @@
         },
         {
           "rank": 13,
+          "name": "Léteurface",
+          "profile": "https://steamcommunity.com/profiles/76561198056931702/",
+          "score": 43,
+          "detail": ""
+        },
+        {
+          "rank": 14,
           "name": "ChoiceHoney",
           "profile": "https://steamcommunity.com/id/gabe1118/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "Dopler",
           "profile": "https://steamcommunity.com/id/dopler11/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "Taeterific",
           "profile": "https://steamcommunity.com/id/Taeterific/",
           "score": 43,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "Who Am I?",
           "profile": "https://steamcommunity.com/id/WaI75/",
           "score": 15,
           "detail": ""
         },
         {
-          "rank": 17,
+          "rank": 18,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
           "score": 7,
-          "detail": ""
-        },
-        {
-          "rank": 18,
-          "name": "Léteurface",
-          "profile": "https://steamcommunity.com/profiles/76561198056931702/",
-          "score": 6,
           "detail": ""
         },
         {
@@ -262,50 +262,50 @@
         },
         {
           "rank": 11,
+          "name": "Léteurface",
+          "profile": "https://steamcommunity.com/profiles/76561198056931702/",
+          "score": 55,
+          "detail": ""
+        },
+        {
+          "rank": 12,
           "name": "Everwinter",
           "profile": "https://steamcommunity.com/id/kaze_katsuya/",
           "score": 34,
           "detail": ""
         },
         {
-          "rank": 12,
+          "rank": 13,
           "name": "normal",
           "profile": "https://steamcommunity.com/profiles/76561199401185824/",
           "score": 25,
           "detail": ""
         },
         {
-          "rank": 13,
+          "rank": 14,
           "name": "Manshari_",
           "profile": "https://steamcommunity.com/profiles/76561198328814985/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "Zereth",
           "profile": "https://steamcommunity.com/id/elarkaso/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "ilya-babanov",
           "profile": "https://steamcommunity.com/profiles/76561198110361681/",
           "score": 23,
           "detail": ""
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "rcz",
           "profile": "https://steamcommunity.com/profiles/76561198097800158/",
-          "score": 23,
-          "detail": ""
-        },
-        {
-          "rank": 17,
-          "name": "Léteurface",
-          "profile": "https://steamcommunity.com/profiles/76561198056931702/",
           "score": 23,
           "detail": ""
         },
